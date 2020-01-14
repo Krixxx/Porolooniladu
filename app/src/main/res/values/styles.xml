@@ -1,0 +1,52 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppThemeNoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="MainButton">
+
+        <item name="android:textSize">@dimen/main_btn_text_size</item>
+        <item name="android:background">@color/mainActivityButton</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:textColor">@color/mainActivityButtonText</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+
+    </style>
+
+    <style name="FoamInHeader">
+
+        <item name="android:textSize">@dimen/header_text_size</item>
+        <item name="android:textColor">@color/mainActivityButtonText</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+
+    </style>
+
+    <style name="FoamInHeaderAttr">
+
+        <item name="android:textSize">@dimen/header_attributes_size</item>
+        <item name="android:textColor">@color/mainActivityButtonText</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+
+    </style>
+
+    <style name="AppTheme.MySearchViewStyle" parent="Widget.AppCompat.Light.SearchView">
+        <item name="searchIcon">@drawable/ic_search_white</item>
+        <item name="queryBackground">@color/white</item>
+        <item name="searchHintIcon">@null</item>
+        <item name="queryHint">"Sisesta otsing siia"</item>
+        <item name="android:maxWidth">300dp</item>
+    </style>
+
+</resources>

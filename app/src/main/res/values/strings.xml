@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Poroloonilao Liikumised</string>
+    <string name="btn_foam_in">Porolooni vastuvõtt</string>
+    <string name="btn_foam_out">Porolooni väljastus</string>
+    <string name="btn_fabrics_out">Kangaste väljastus</string>
+    <string name="toast_nothing_to_show">Pole veel midagi näidata</string>
+    <string name="header_foamin_product_code">Tootekood</string>
+    <string name="header_foamin_quantity">Kogus</string>
+    <string name="header_foamin_ok">OK</string>
+    <string name="search_hint">Sisesta otsing siia</string>
+    <string name="current_date_sample">Kuupäev</string>
+    <string name="no_open_positions">Saabumata ridu pole</string>
+    <string name="foam_in_deleted_title">Saabunud tellimuste read</string>
+    <string name="foam_in_del_order_number">Tellimus</string>
+    <string name="txt_order_already_loaded">See tellimus on juba sisse laetud!</string>
+    <string name="title_forders_to_be_deleted">Kustutamist ootavad tellimused</string>
+</resources>
