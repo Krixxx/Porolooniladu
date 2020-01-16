@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,14 +21,16 @@ import com.hepicode.porolooniladu.R;
 import com.hepicode.porolooniladu.model.OrderLine;
 import com.hepicode.porolooniladu.model.OrderLineViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.Inflater;
 
-public class OrderLineListAdapter extends RecyclerView.Adapter<OrderLineListAdapter.OrderLineViewHolder> {
+public class OrderLineListAdapter extends RecyclerView.Adapter<OrderLineListAdapter.OrderLineViewHolder> implements Filterable {
 
     private Context context;
     private final LayoutInflater orderLineInflater;
     private List<OrderLine> orderLineList;
+    private List<OrderLine> orderLineListFull;
     private OrderLineViewModel orderLineViewModel;
 
     public OrderLineListAdapter(Context context) {
@@ -67,6 +71,7 @@ public class OrderLineListAdapter extends RecyclerView.Adapter<OrderLineListAdap
     public void setOrderLines(List<OrderLine> orderLines) {
 
         orderLineList = orderLines;
+        orderLineListFull = new ArrayList<>(orderLines);
 
         notifyDataSetChanged();
     }
@@ -128,4 +133,40 @@ public class OrderLineListAdapter extends RecyclerView.Adapter<OrderLineListAdap
             }
         }
     }
+
+    @Override
+    public Filter getFilter() {
+        return orderFilter;
+    }
+
+    private Filter orderFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            List<OrderLine> filteredList = new ArrayList<>();
+
+            if (charSequence == null || charSequence.length() == 0){
+                filteredList.addAll(orderLineListFull);
+            }else {
+                String filterPattern = charSequence.toString().toLowerCase().trim();
+
+                for (OrderLine orderLine: orderLineListFull){
+                    if (orderLine.getProductCode().toLowerCase().contains(filterPattern)){
+                        filteredList.add(orderLine);
+                    }
+                }
+            }
+
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            orderLineList.clear();
+            orderLineList.addAll((List)filterResults.values);
+            notifyDataSetChanged();
+        }
+    };
 }

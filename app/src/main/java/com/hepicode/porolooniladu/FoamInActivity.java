@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -17,8 +18,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hepicode.porolooniladu.adapter.OrderLineListAdapter;
 import com.hepicode.porolooniladu.model.OrderLine;
@@ -39,6 +42,7 @@ public class FoamInActivity extends AppCompatActivity {
     private OrderLineViewModel orderLineViewModel;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ArrayAdapter<String> adapter;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,13 +59,12 @@ public class FoamInActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         swipeRefreshLayout = findViewById(R.id.refresh_layout);
+        searchView = findViewById(R.id.foam_in_searchview);
 
         //Get current date
         dateText = findViewById(R.id.date_textview);
         CalendarModel cal = new CalendarModel();
         dateText.setText(cal.getCalendarText());
-
-
 
         recyclerView = findViewById(R.id.foam_in_recyclerview);
         orderLineListAdapter = new OrderLineListAdapter(this);
@@ -74,8 +77,24 @@ public class FoamInActivity extends AppCompatActivity {
             }
         });
 
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                orderLineListAdapter.getFilter().filter(s);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                orderLineListAdapter.getFilter().filter(s);
+                return false;
+            }
+        });
+
         recyclerView.setAdapter(orderLineListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        
 
         //Set up spinner
         spinner = findViewById(R.id.spinner);
@@ -96,7 +115,6 @@ public class FoamInActivity extends AppCompatActivity {
 
                 loadData(selection);
 
-
 //                orderLineListAdapter.notifyDataSetChanged();
 
             }
@@ -106,7 +124,6 @@ public class FoamInActivity extends AppCompatActivity {
 
             }
         });
-
 
     }
 
@@ -122,7 +139,9 @@ public class FoamInActivity extends AppCompatActivity {
 
                 for (OrderLine line: orderLines){
                     Log.d("ORDERLINE_MAIN", "onChanged: " + line.getOrderNumber());
+
                     Log.d("ORDERLINE_MAIN", "onChanged: " + line.getProductCode());
+
                 }
             }
         });
