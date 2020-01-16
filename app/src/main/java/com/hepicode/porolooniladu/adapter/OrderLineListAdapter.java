@@ -36,9 +36,7 @@ public class OrderLineListAdapter extends RecyclerView.Adapter<OrderLineListAdap
     public OrderLineListAdapter(Context context) {
         this.context = context;
         orderLineInflater = LayoutInflater.from(context);
-
         orderLineViewModel = ViewModelProviders.of((FoamInActivity) context).get(OrderLineViewModel.class);
-
     }
 
     @NonNull

@@ -53,21 +53,20 @@ public class FoamInActivity extends AppCompatActivity {
         Intent intent = getIntent();
         spinnerItems = intent.getStringArrayListExtra("spinner_list");
 
+        initViews();
+
         orderLineViewModel = ViewModelProviders.of(this).get(OrderLineViewModel.class);
 
         //Keep screen switched on, when user is working
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-        swipeRefreshLayout = findViewById(R.id.refresh_layout);
-        searchView = findViewById(R.id.foam_in_searchview);
 
         //Get current date
         dateText = findViewById(R.id.date_textview);
         CalendarModel cal = new CalendarModel();
         dateText.setText(cal.getCalendarText());
 
-        recyclerView = findViewById(R.id.foam_in_recyclerview);
-        orderLineListAdapter = new OrderLineListAdapter(this);
+        //Load first spinner item data to recyclerview
+        loadData(Integer.valueOf(spinnerItems.get(0)));
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -77,32 +76,19 @@ public class FoamInActivity extends AppCompatActivity {
             }
         });
 
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                orderLineListAdapter.getFilter().filter(s);
+                    orderLineListAdapter.getFilter().filter(s);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-                orderLineListAdapter.getFilter().filter(s);
+                    orderLineListAdapter.getFilter().filter(s);
                 return false;
             }
         });
-
-        recyclerView.setAdapter(orderLineListAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        
-
-        //Set up spinner
-        spinner = findViewById(R.id.spinner);
-        adapter = new ArrayAdapter<String>(this, R.layout.spinner_item, spinnerItems);
-        adapter.setDropDownViewResource(R.layout.spinner_item);
-        adapter.notifyDataSetChanged();
-
-        spinner.setAdapter(adapter);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -113,10 +99,7 @@ public class FoamInActivity extends AppCompatActivity {
 
                 selection = Integer.valueOf(spinner.getSelectedItem().toString());
 
-                loadData(selection);
-
-//                orderLineListAdapter.notifyDataSetChanged();
-
+                orderLineViewModel.setOrderLineFilter(selection);
             }
 
             @Override
@@ -125,6 +108,27 @@ public class FoamInActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void initViews(){
+
+        swipeRefreshLayout = findViewById(R.id.refresh_layout);
+        searchView = findViewById(R.id.foam_in_searchview);
+
+        recyclerView = findViewById(R.id.foam_in_recyclerview);
+
+        orderLineListAdapter = new OrderLineListAdapter(this);
+
+        spinner = findViewById(R.id.spinner);
+        adapter = new ArrayAdapter<String>(this, R.layout.spinner_item, spinnerItems);
+        adapter.setDropDownViewResource(R.layout.spinner_item);
+
+        adapter.notifyDataSetChanged();
+
+        spinner.setAdapter(adapter);
+
+        recyclerView.setAdapter(orderLineListAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void loadData(final int ordernumber) {
@@ -137,15 +141,12 @@ public class FoamInActivity extends AppCompatActivity {
 
                 orderLineListAdapter.setOrderLines(orderLines);
 
-                for (OrderLine line: orderLines){
-                    Log.d("ORDERLINE_MAIN", "onChanged: " + line.getOrderNumber());
-
-                    Log.d("ORDERLINE_MAIN", "onChanged: " + line.getProductCode());
-
-                }
+//                for (OrderLine line: orderLines){
+//                    Log.d("ORDERLINE_MAIN", "onChanged: " + line.getOrderNumber());
+//
+//                    Log.d("ORDERLINE_MAIN", "onChanged: " + line.getProductCode());
+//                }
             }
         });
-
-
     }
 }

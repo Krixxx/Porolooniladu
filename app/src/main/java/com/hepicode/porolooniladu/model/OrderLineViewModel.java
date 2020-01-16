@@ -6,7 +6,10 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 
+import com.hepicode.porolooniladu.FoamInActivity;
 import com.hepicode.porolooniladu.util.OrderLineRepository;
 
 import java.util.List;
@@ -17,6 +20,8 @@ public class OrderLineViewModel extends AndroidViewModel {
     private LiveData<List<OrderLine>> allOrderLines;
     private LiveData<List<OrderLine>> allCheckedOrderLines;
     private LiveData<List<OrderLine>> allUnCheckedOrderLines;
+    private LiveData<List<OrderLine>> getAllLines;
+    private final MutableLiveData<Integer> orderLineFilter;
 
     private LiveData<List<OrderNumber>> allOrderNumbers;
 
@@ -27,6 +32,7 @@ public class OrderLineViewModel extends AndroidViewModel {
         allOrderLines = orderLineRepository.getAllOrderLines();
         allCheckedOrderLines = orderLineRepository.getAllCheckedOrderLines();
         allUnCheckedOrderLines = orderLineRepository.getAllUnCheckedOrderLines();
+        orderLineFilter = new MutableLiveData<>();
 
         allOrderNumbers = orderLineRepository.getAllOrderNumbers();
     }
@@ -43,9 +49,20 @@ public class OrderLineViewModel extends AndroidViewModel {
         return allUnCheckedOrderLines;
     }
 
-    public LiveData<List<OrderLine>> getAllUnCheckedSingleOrderLines(int orderNumber){
-        return orderLineRepository.getAllUnCheckedSingleOrderLines(orderNumber);
+
+    //This part changed, to get correct data to recyclerview.
+
+    public void setOrderLineFilter(int orderNumber){
+        orderLineFilter.setValue(orderNumber);
     }
+
+    public LiveData<List<OrderLine>> getAllUnCheckedSingleOrderLines(int order){
+        return getAllLines = Transformations.switchMap(orderLineFilter, orderNumber -> orderLineRepository.getAllUnCheckedSingleOrderLines(orderNumber));
+    }
+
+//    public LiveData<List<OrderLine>> getAllUnCheckedSingleOrderLines(int orderNumber){
+//        return orderLineRepository.getAllUnCheckedSingleOrderLines(orderNumber);
+//    }
 
     public LiveData<List<OrderNumber>> getAllOrderNumbers(){
         return allOrderNumbers;
