@@ -133,7 +133,6 @@ public class FoamInActivity extends AppCompatActivity {
 
     private void loadData(final int ordernumber) {
 
-        //TODO: find out why observer loads all data (from all previous spinner items), when recyclerviewAdapter refreshes
         orderLineViewModel.getAllUnCheckedSingleOrderLines(ordernumber).observe(this, new Observer<List<OrderLine>>() {
             @Override
             public void onChanged(List<OrderLine> orderLines) {
