@@ -49,6 +49,11 @@ public class OrderLineRepository {
         return allCheckedOrderLines;
     }
 
+    public LiveData<OrderLine> getAOrderLine(int id){
+
+        return orderLineDao.getAOrderLine(id);
+    }
+
     public LiveData<List<OrderLine>> getAllUnCheckedOrderLines() {
 
         return allUnCheckedOrderLines;
@@ -69,7 +74,9 @@ public class OrderLineRepository {
 
     public void update(OrderLine orderLine){
         new updateAsyncTask(orderLineDao).execute(orderLine);
-        Log.d("ORDERLINE_REPOSITORY", "updateOrderLine: " + orderLine.getOrderNumber());
+        Log.d("ORDERLINE_REPOSITORY", "updateOrderLine: " + orderLine.getOrderNumber() + " product: "
+                + orderLine.getProductCode() + " qty: " + orderLine.getArrivedQuantity()
+                + " " + orderLine.getIsArrived() + " " + orderLine.getId());
     }
 
     public void delete(OrderLine orderLine){

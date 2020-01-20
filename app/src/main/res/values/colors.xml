@@ -11,5 +11,7 @@
     <color name="mainActivityButton">#880e4f</color>
     <color name="mainActivityButtonText">#FFFFFF</color>
 
+    <color name="partiallyArrivedPosition">#FCE4EC</color>
+
     <color name="white">#FFFFFF</color>
 </resources>

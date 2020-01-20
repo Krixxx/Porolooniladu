@@ -8,10 +8,13 @@
     <string name="header_foamin_quantity">Kogus</string>
     <string name="header_foamin_ok">OK</string>
     <string name="search_hint">Sisesta otsing siia</string>
-    <string name="current_date_sample">Kuupäev</string>
+    <string name="current_date_sample">Ridu: </string>
     <string name="no_open_positions">Saabumata ridu pole</string>
     <string name="foam_in_deleted_title">Saabunud tellimuste read</string>
     <string name="foam_in_del_order_number">Tellimus</string>
     <string name="txt_order_already_loaded">See tellimus on juba sisse laetud!</string>
     <string name="title_forders_to_be_deleted">Kustutamist ootavad tellimused</string>
+    <string name="lines_title">Ridu: </string>
+    <string name="no_orders_warning">Pole ühtegi tellimust!</string>
+    <string name="order_no_title">Tellimuse nr:</string>
 </resources>

@@ -23,7 +23,7 @@ public class OrderLine {
     private int arrivedQuantity;
 
     @ColumnInfo(name = "isarrived_col")
-    private int isArrived;
+    private int isArrived;  // isArrived has 4 statuses: 0 - not arrived, 1 - arrived, 2 - partially arrived, 3 -  some details missing
 
     @ColumnInfo(name = "ordernumber_col")
     private int orderNumber;

@@ -18,20 +18,23 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.hepicode.porolooniladu.adapter.OrderLineListAdapter;
 import com.hepicode.porolooniladu.model.OrderLine;
 import com.hepicode.porolooniladu.model.OrderLineViewModel;
 import com.hepicode.porolooniladu.util.CalendarModel;
+import com.hepicode.porolooniladu.util.FoamInBottomSheetDialog;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FoamInActivity extends AppCompatActivity {
+public class FoamInActivity extends AppCompatActivity implements FoamInBottomSheetDialog.BottomSheetListener {
 
     private TextView dateText;
     private Spinner spinner;
@@ -43,6 +46,8 @@ public class FoamInActivity extends AppCompatActivity {
     private SwipeRefreshLayout swipeRefreshLayout;
     private ArrayAdapter<String> adapter;
     private SearchView searchView;
+    private OrderLine mOrderLine;
+    private DividerItemDecoration dividerItemDecoration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,13 +65,20 @@ public class FoamInActivity extends AppCompatActivity {
         //Keep screen switched on, when user is working
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        //Get current date
-        dateText = findViewById(R.id.date_textview);
-        CalendarModel cal = new CalendarModel();
-        dateText.setText(cal.getCalendarText());
+        //Get current date - taken out of app.
+
+//        CalendarModel cal = new CalendarModel();
+//        dateText.setText(cal.getCalendarText());
+
+
 
         //Load first spinner item data to recyclerview
-        loadData(Integer.valueOf(spinnerItems.get(0)));
+        if (spinnerItems != null){
+            loadData(Integer.valueOf(spinnerItems.get(0)));
+        }else{
+            finish();
+        }
+
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -114,10 +126,13 @@ public class FoamInActivity extends AppCompatActivity {
 
         swipeRefreshLayout = findViewById(R.id.refresh_layout);
         searchView = findViewById(R.id.foam_in_searchview);
+        dateText = findViewById(R.id.date_textview);
 
         recyclerView = findViewById(R.id.foam_in_recyclerview);
 
         orderLineListAdapter = new OrderLineListAdapter(this);
+
+
 
         spinner = findViewById(R.id.spinner);
         adapter = new ArrayAdapter<String>(this, R.layout.spinner_item, spinnerItems);
@@ -129,6 +144,9 @@ public class FoamInActivity extends AppCompatActivity {
 
         recyclerView.setAdapter(orderLineListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), LinearLayout.VERTICAL);
+        recyclerView.addItemDecoration(dividerItemDecoration);
     }
 
     private void loadData(final int ordernumber) {
@@ -139,13 +157,44 @@ public class FoamInActivity extends AppCompatActivity {
                 //update saved copy of lines
 
                 orderLineListAdapter.setOrderLines(orderLines);
+                String lines = getString(R.string.lines_title)+ " " + orderLineListAdapter.getItemCount();
+                dateText.setText(lines);
 
 //                for (OrderLine line: orderLines){
-//                    Log.d("ORDERLINE_MAIN", "onChanged: " + line.getOrderNumber());
-//
-//                    Log.d("ORDERLINE_MAIN", "onChanged: " + line.getProductCode());
-//                }
+////                    Log.d("ORDERLINE_MAIN", "onChanged: " + line.getOrderNumber());
+////
+////                    Log.d("ORDERLINE_MAIN", "onChanged: " + line.getProductCode());
+////                }
             }
         });
+    }
+
+    @Override
+    public void onButtonClicked(int id, int isArrived, int quantity, int orderNumber, OrderLine line) {
+
+        if (isArrived == 0 || quantity == 0){
+
+            Toast.makeText(this, "Palun täida vajalikud väljad!", Toast.LENGTH_SHORT).show();
+
+        }else {
+
+            mOrderLine = line;
+
+            if (mOrderLine == null){
+
+                Log.d("MAIN_ORDERLINE_NULL", "onButtonClicked: ei lae andmeid");
+
+            }else {
+
+                mOrderLine.setArrivedQuantity(quantity);
+                mOrderLine.setIsArrived(isArrived);
+                orderLineViewModel.update(mOrderLine);
+                orderLineListAdapter.notifyDataSetChanged();
+                Log.d("MAIN", "onChanged: " + mOrderLine.getProductCode());
+            }
+        }
+
+
+
     }
 }

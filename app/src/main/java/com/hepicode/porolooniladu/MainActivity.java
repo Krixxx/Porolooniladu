@@ -36,6 +36,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int READ_REQUEST_CODE = 42;
+    public static final int DELETE_REQUEST_CODE = 55;
     private static final int PERMISSION_REQUEST_STORAGE = 1000;
     Button foamInButton, foamOutButton, fabricOutButton;
     ImageButton foamInDownload, foamInDeleted, foamInEdit;
@@ -74,12 +75,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onChanged(List<OrderNumber> orderNumbers) {
 
                 if (orderNumbers != null) {
+
+                    spinnerItems.clear();
+
                     for (OrderNumber number : orderNumbers) {
                         String num = String.valueOf(number.getOrderNumber());
                         spinnerItems.add(num);
                     }
-                } else {
-                    spinnerItems.add("empty");
                 }
 
             }
@@ -92,10 +94,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()) {
             case R.id.btn_foam_in:
 
-                Intent intent = new Intent(MainActivity.this, FoamInActivity.class);
-                intent.putStringArrayListExtra("spinner_list", spinnerItems);
-                startActivity(intent);
-                break;
+                if (spinnerItems.size() != 0){
+
+                    Intent intent = new Intent(MainActivity.this, FoamInActivity.class);
+                    intent.putStringArrayListExtra("spinner_list", spinnerItems);
+                    startActivity(intent);
+                    break;
+
+                }else {
+
+                    Toast.makeText(this, R.string.no_orders_warning, Toast.LENGTH_SHORT).show();
+                    break;
+                }
 
             case R.id.btn_foam_out:
 
@@ -169,6 +179,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             orderNumber = new OrderNumber(Integer.valueOf(filename));
             orderLineViewModel.insertNr(orderNumber);
+            spinnerItems.add(String.valueOf(orderNumber));
+
             Toast.makeText(this, "Tellimus " + filename + " laetud. Ridu kokku: " + i, Toast.LENGTH_SHORT).show();
 
         } catch (IOException e) {

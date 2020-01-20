@@ -1,6 +1,8 @@
 package com.hepicode.porolooniladu.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,18 +10,25 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.hepicode.porolooniladu.FoamInActivity;
 import com.hepicode.porolooniladu.FoamInDeletedActivity;
+import com.hepicode.porolooniladu.MainActivity;
 import com.hepicode.porolooniladu.R;
 import com.hepicode.porolooniladu.model.OrderLine;
 import com.hepicode.porolooniladu.model.OrderLineViewModel;
+import com.hepicode.porolooniladu.util.FoamInBottomSheetDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,15 +60,25 @@ public class OrderLineListAdapter extends RecyclerView.Adapter<OrderLineListAdap
     @Override
     public void onBindViewHolder(@NonNull OrderLineViewHolder orderLineViewHolder, int position) {
 
-        if (orderLineList != null) {
+        if (orderLineListFull != null) {
 
-            OrderLine current = orderLineList.get(position);
+            OrderLine current = orderLineListFull.get(position);
 
             orderLineViewHolder.productCodeTextView.setText(current.getProductCode());
             orderLineViewHolder.orderedQuantityTextView.setText(String.valueOf(current.getOrderedQuantity()));
 
             orderLineViewHolder.okCheckBox.setOnCheckedChangeListener(null);
             orderLineViewHolder.okCheckBox.setChecked(false);
+
+            if (current.getIsArrived() == 2 || current.getIsArrived() == 3){
+
+                orderLineViewHolder.singleLineLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.partiallyArrivedPosition));
+
+            }else if (current.getIsArrived() == 0){
+
+                orderLineViewHolder.singleLineLayout.setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent));
+            }
+
 
         } else {
             orderLineViewHolder.productCodeTextView.setText(R.string.no_open_positions);
@@ -77,8 +96,8 @@ public class OrderLineListAdapter extends RecyclerView.Adapter<OrderLineListAdap
     @Override
     public int getItemCount() {
 
-        if (orderLineList != null) {
-            return orderLineList.size();
+        if (orderLineListFull != null) {
+            return orderLineListFull.size();
         } else {
             return 0;
         }
@@ -88,6 +107,7 @@ public class OrderLineListAdapter extends RecyclerView.Adapter<OrderLineListAdap
 
         public TextView productCodeTextView, orderedQuantityTextView;
         public CheckBox okCheckBox;
+        public ConstraintLayout singleLineLayout;
 
         public OrderLineViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -95,17 +115,20 @@ public class OrderLineListAdapter extends RecyclerView.Adapter<OrderLineListAdap
             productCodeTextView = itemView.findViewById(R.id.foam_in_product_code);
             orderedQuantityTextView = itemView.findViewById(R.id.foam_in_quantity);
             okCheckBox = itemView.findViewById(R.id.foam_in_checkbox);
+            singleLineLayout = itemView.findViewById(R.id.foam_in_single_line_layout);
 
             okCheckBox.setOnClickListener(this);
             productCodeTextView.setOnClickListener(this);
         }
+
+
 
         @Override
         public void onClick(View view) {
 
             int position = getAdapterPosition();
 
-            OrderLine line = orderLineList.get(position);
+            OrderLine line = orderLineListFull.get(position);
 
             switch (view.getId()) {
 
@@ -115,8 +138,8 @@ public class OrderLineListAdapter extends RecyclerView.Adapter<OrderLineListAdap
 
                         line.setIsArrived(1);
                         orderLineViewModel.update(line);
-                        orderLineList.remove(position);
-                        notifyItemRemoved(position);
+                        orderLineListFull.remove(position);
+                        notifyDataSetChanged();
 
                     } else {
                         line.setIsArrived(0);
@@ -126,7 +149,9 @@ public class OrderLineListAdapter extends RecyclerView.Adapter<OrderLineListAdap
                     break;
 
                 case R.id.foam_in_product_code:
-                    Toast.makeText(context, "Status: " + line.getIsArrived(), Toast.LENGTH_SHORT).show();
+
+                    pushFragment(context, line);
+
                     break;
             }
         }
@@ -140,31 +165,64 @@ public class OrderLineListAdapter extends RecyclerView.Adapter<OrderLineListAdap
     private Filter orderFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence charSequence) {
-            List<OrderLine> filteredList = new ArrayList<>();
 
-            if (charSequence == null || charSequence.length() == 0){
-                filteredList.addAll(orderLineListFull);
+            String charString = charSequence.toString();
+            if (charString.isEmpty()){
+                orderLineListFull = orderLineList;
             }else {
-                String filterPattern = charSequence.toString().toLowerCase().trim();
-
-                for (OrderLine orderLine: orderLineListFull){
-                    if (orderLine.getProductCode().toLowerCase().contains(filterPattern)){
-                        filteredList.add(orderLine);
+                List<OrderLine> filteredList = new ArrayList<>();
+                for (OrderLine line: orderLineList){
+                    if (line.getProductCode().toLowerCase().contains(charString.toLowerCase())){
+                        filteredList.add(line);
                     }
                 }
+                orderLineListFull = filteredList;
             }
+//            List<OrderLine> filteredList = new ArrayList<>();
+//
+//            if (charSequence == null || charSequence.length() == 0){
+//                filteredList.addAll(orderLineListFull);
+//            }else {
+//                String filterPattern = charSequence.toString().toLowerCase().trim();
+//
+//                for (OrderLine orderLine: orderLineListFull){
+//                    if (orderLine.getProductCode().toLowerCase().contains(filterPattern)){
+//                        filteredList.add(orderLine);
+//                    }
+//                }
+//            }
 
             FilterResults results = new FilterResults();
-            results.values = filteredList;
+            results.values = orderLineListFull;
 
             return results;
         }
 
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-            orderLineList.clear();
-            orderLineList.addAll((List)filterResults.values);
+//            orderLineList.clear();
+//            orderLineList.addAll((List)filterResults.values);
+
+            orderLineListFull = (ArrayList<OrderLine>) filterResults.values;
+
             notifyDataSetChanged();
         }
     };
+
+    public void pushFragment(Context context, OrderLine line) {
+        FragmentManager fm = ((FoamInActivity) context).getSupportFragmentManager();
+        FoamInBottomSheetDialog bottomSheet = new FoamInBottomSheetDialog();
+
+        Bundle info = new Bundle();
+
+        info.putInt("id", line.getId());
+        info.putString("product_code", line.getProductCode());
+        info.putInt("quantity", line.getOrderedQuantity());
+        info.putInt("order_number", line.getOrderNumber());
+        info.putInt("arrived_quantity", line.getArrivedQuantity());
+        info.putInt("isArrived", line.getIsArrived());
+        bottomSheet.setArguments(info);
+
+        bottomSheet.show(fm, "");
+    }
 }
