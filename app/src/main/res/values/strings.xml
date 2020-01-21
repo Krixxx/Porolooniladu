@@ -17,4 +17,5 @@
     <string name="lines_title">Ridu: </string>
     <string name="no_orders_warning">Pole ühtegi tellimust!</string>
     <string name="order_no_title">Tellimuse nr:</string>
+    <string name="send_report">Saada kokkuvõte e-mailiga...</string>
 </resources>

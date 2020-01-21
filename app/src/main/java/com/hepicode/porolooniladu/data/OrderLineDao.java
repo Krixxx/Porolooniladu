@@ -34,6 +34,9 @@ public interface OrderLineDao {
     @Update
     void updateOrderLine(OrderLine orderLine);
 
+    @Query("SELECT * FROM orderline_table WHERE (isarrived_col = 2 OR isarrived_col = 3) AND ordernumber_col = :orderNumber ORDER BY productcode_col ASC")
+    LiveData<List<OrderLine>> getProblemOrderLines(int orderNumber);
+
     @Query("SELECT * FROM orderline_table WHERE id = :id")
     LiveData<OrderLine> getAOrderLine(int id);
 

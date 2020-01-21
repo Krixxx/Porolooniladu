@@ -60,6 +60,10 @@ public class OrderLineViewModel extends AndroidViewModel {
         return orderLineRepository.getAOrderLine(id);
     }
 
+    public LiveData<List<OrderLine>> getProblemOrderLines(int orderNumber){
+        return orderLineRepository.getProblemOrderLines(orderNumber);
+    }
+
     public LiveData<List<OrderLine>> getAllUnCheckedSingleOrderLines(int order){
         return getAllLines = Transformations.switchMap(orderLineFilter, orderNumber -> orderLineRepository.getAllUnCheckedSingleOrderLines(orderNumber));
     }

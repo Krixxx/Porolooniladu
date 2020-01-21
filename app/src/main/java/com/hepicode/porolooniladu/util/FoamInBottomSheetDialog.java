@@ -47,7 +47,7 @@ public class FoamInBottomSheetDialog extends BottomSheetDialogFragment {
         EditText arrivedQuantity = v.findViewById(R.id.bs_arrived_qty_et);
         Button saveButton = v.findViewById(R.id.bs_save_btn);
 
-        if (getArguments() != null){
+        if (getArguments() != null) {
             id = getArguments().getInt("id");
             quantity = getArguments().getInt("quantity");  //Ordered quantity
             orderNumber = getArguments().getInt("order_number");
@@ -62,43 +62,42 @@ public class FoamInBottomSheetDialog extends BottomSheetDialogFragment {
         orderLine = new OrderLine(productCodeTxt, quantity, arrivedQuantityInt, isArrivedInt, orderNumber);
         orderLine.setId(id);
 
-        if (arrivedQuantityInt != 0){
+        if (arrivedQuantityInt != 0) {
             arrivedQuantity.setText(Integer.toString(arrivedQuantityInt));
-        } else{
+        } else {
             arrivedQty = 0;
         }
 
 
-
-        if (isArrivedInt != 0){
-            if (isArrivedInt == 2){
+        if (isArrivedInt != 0) {
+            if (isArrivedInt == 2) {
                 detailsMissing.setChecked(true);
-            }else if (isArrivedInt == 3){
+            } else if (isArrivedInt == 3) {
                 setsMissing.setChecked(true);
             }
-        }else {
+        } else {
             isArrived = 0;
         }
-
-
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if (!arrivedQuantity.getText().toString().isEmpty()){
+                if (!arrivedQuantity.getText().toString().isEmpty()) {
                     arrivedQty = Integer.parseInt(String.valueOf(arrivedQuantity.getText()));
-                }else {
+                } else {
                     arrivedQty = 0;
                 }
 
-                if (detailsMissing.isChecked()){
+                if (detailsMissing.isChecked()) {
                     isArrived = 2;
-                }else if (setsMissing.isChecked()){
+                } else if (setsMissing.isChecked()) {
                     isArrived = 3;
-                }else if (allArrived.isChecked()){
+                } else if (allArrived.isChecked()) {
                     isArrived = 1;
                     arrivedQty = quantity;
+                } else if (!detailsMissing.isChecked() && !setsMissing.isChecked() && !allArrived.isChecked()) {
+                    isArrived = 0;
                 }
 
                 mListener.onButtonClicked(id, isArrived, arrivedQty, orderNumber, orderLine);
@@ -111,7 +110,7 @@ public class FoamInBottomSheetDialog extends BottomSheetDialogFragment {
         return v;
     }
 
-    public interface BottomSheetListener{
+    public interface BottomSheetListener {
         void onButtonClicked(int id, int isArrived, int quantity, int orderNumber, OrderLine line);
     }
 
@@ -121,9 +120,9 @@ public class FoamInBottomSheetDialog extends BottomSheetDialogFragment {
 
         try {
             mListener = (BottomSheetListener) context;
-        }catch (ClassCastException e){
+        } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-            + " must implement BottomSheetListener");
+                    + " must implement BottomSheetListener");
         }
 
     }

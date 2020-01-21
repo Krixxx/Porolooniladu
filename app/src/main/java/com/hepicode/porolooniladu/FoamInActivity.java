@@ -12,12 +12,14 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Spinner;
@@ -38,6 +40,7 @@ public class FoamInActivity extends AppCompatActivity implements FoamInBottomShe
 
     private TextView dateText;
     private Spinner spinner;
+    private ImageButton sendReportButton;
     private List<String> spinnerItems = new ArrayList<>();
     private int selection;
     private RecyclerView recyclerView;
@@ -45,6 +48,7 @@ public class FoamInActivity extends AppCompatActivity implements FoamInBottomShe
     private OrderLineViewModel orderLineViewModel;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ArrayAdapter<String> adapter;
+    private List<OrderLine> currentOrderLines = new ArrayList<>();
     private SearchView searchView;
     private OrderLine mOrderLine;
     private DividerItemDecoration dividerItemDecoration;
@@ -71,11 +75,10 @@ public class FoamInActivity extends AppCompatActivity implements FoamInBottomShe
 //        dateText.setText(cal.getCalendarText());
 
 
-
         //Load first spinner item data to recyclerview
-        if (spinnerItems != null){
+        if (spinnerItems != null) {
             loadData(Integer.valueOf(spinnerItems.get(0)));
-        }else{
+        } else {
             finish();
         }
 
@@ -91,13 +94,13 @@ public class FoamInActivity extends AppCompatActivity implements FoamInBottomShe
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                    orderLineListAdapter.getFilter().filter(s);
+                orderLineListAdapter.getFilter().filter(s);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-                    orderLineListAdapter.getFilter().filter(s);
+                orderLineListAdapter.getFilter().filter(s);
                 return false;
             }
         });
@@ -112,27 +115,77 @@ public class FoamInActivity extends AppCompatActivity implements FoamInBottomShe
                 selection = Integer.valueOf(spinner.getSelectedItem().toString());
 
                 orderLineViewModel.setOrderLineFilter(selection);
+
+                loadReportOrderLines(selection);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
             }
+
+        });
+
+        sendReportButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                loadReportOrderLines(selection);
+
+                if (currentOrderLines != null) {
+
+                    StringBuilder sb = new StringBuilder();
+                    int i = 1;
+
+                    for (OrderLine line : currentOrderLines) {
+
+                        if (line.getIsArrived() == 2) {
+
+                            sb.append(i + ") " + line.getProductCode() + " - ordered " + line.getOrderedQuantity() +
+                                    " sets, we received " + line.getArrivedQuantity() + " sets. Details are missing!\n");
+
+                            i++;
+
+                        } else if (line.getIsArrived() == 3) {
+
+                            sb.append(i + ") " + line.getProductCode() + " - ordered " + line.getOrderedQuantity() +
+                                    " sets, we received " + line.getArrivedQuantity() + " sets.\n");
+
+                            i++;
+                        }
+                    }
+
+                    Log.d("MAIN_STRINGBUILDER", "onClick: " + sb);
+
+                    Intent intent1 = new Intent(Intent.ACTION_SENDTO);
+
+                    String uriText = "mailto:" + Uri.encode("") +
+                            "?subject=" + Uri.encode("Problems with PO " + selection) +
+                            "&body=" + Uri.encode("Hello\n\nWe discovered following problems:\n\n" + sb);
+
+                    Uri uri = Uri.parse(uriText);
+
+                    intent1.setData(uri);
+
+                    startActivity(Intent.createChooser(intent1, getString(R.string.send_report)));
+
+                }
+
+            }
         });
 
     }
 
-    private void initViews(){
+    private void initViews() {
 
         swipeRefreshLayout = findViewById(R.id.refresh_layout);
         searchView = findViewById(R.id.foam_in_searchview);
         dateText = findViewById(R.id.date_textview);
+        sendReportButton = findViewById(R.id.send_image_button);
 
         recyclerView = findViewById(R.id.foam_in_recyclerview);
 
         orderLineListAdapter = new OrderLineListAdapter(this);
-
-
 
         spinner = findViewById(R.id.spinner);
         adapter = new ArrayAdapter<String>(this, R.layout.spinner_item, spinnerItems);
@@ -157,9 +210,12 @@ public class FoamInActivity extends AppCompatActivity implements FoamInBottomShe
                 //update saved copy of lines
 
                 orderLineListAdapter.setOrderLines(orderLines);
-                String lines = getString(R.string.lines_title)+ " " + orderLineListAdapter.getItemCount();
+                String lines = getString(R.string.lines_title) + " " + orderLineListAdapter.getItemCount();
                 dateText.setText(lines);
 
+                //TODO Check current orderlines. If they are only 2 and 3 status, then display imagebutton.
+//                currentOrderLines.clear();
+//                currentOrderLines = orderLines;
 //                for (OrderLine line: orderLines){
 ////                    Log.d("ORDERLINE_MAIN", "onChanged: " + line.getOrderNumber());
 ////
@@ -167,33 +223,53 @@ public class FoamInActivity extends AppCompatActivity implements FoamInBottomShe
 ////                }
             }
         });
+
+//        int i;
+//
+//        for (OrderLine line: currentOrderLines){
+//            i = line.getIsArrived();
+//        }
+
     }
 
     @Override
     public void onButtonClicked(int id, int isArrived, int quantity, int orderNumber, OrderLine line) {
 
-        if (isArrived == 0 || quantity == 0){
+        mOrderLine = line;
 
-            Toast.makeText(this, "Palun täida vajalikud väljad!", Toast.LENGTH_SHORT).show();
+        if (mOrderLine == null) {
 
-        }else {
+            Log.d("MAIN_ORDERLINE_NULL", "onButtonClicked: ei lae andmeid");
 
-            mOrderLine = line;
+        } else {
 
-            if (mOrderLine == null){
-
-                Log.d("MAIN_ORDERLINE_NULL", "onButtonClicked: ei lae andmeid");
-
-            }else {
-
-                mOrderLine.setArrivedQuantity(quantity);
-                mOrderLine.setIsArrived(isArrived);
-                orderLineViewModel.update(mOrderLine);
-                orderLineListAdapter.notifyDataSetChanged();
-                Log.d("MAIN", "onChanged: " + mOrderLine.getProductCode());
-            }
+            mOrderLine.setArrivedQuantity(quantity);
+            mOrderLine.setIsArrived(isArrived);
+            orderLineViewModel.update(mOrderLine);
+            orderLineListAdapter.notifyDataSetChanged();
+            Log.d("MAIN", "onChanged: " + mOrderLine.getProductCode());
         }
 
+        if (isArrived == 0) {
+            Toast.makeText(this, "Olek taastatud!", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void loadReportOrderLines(int orderNumber) {
+
+        Log.d("MAIN", "loadReportOrderLines: pressed");
+
+        orderLineViewModel.getProblemOrderLines(orderNumber).observe(this, new Observer<List<OrderLine>>() {
+            @Override
+            public void onChanged(List<OrderLine> orderLineList) {
+
+                currentOrderLines = orderLineList;
+
+                Log.d("MAIN_REPORT_LIST_SIZE", "onChanged: " + orderLineList.size());
+
+            }
+        });
 
 
     }

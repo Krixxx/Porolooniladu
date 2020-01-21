@@ -48,7 +48,6 @@
         app:layout_constraintTop_toTopOf="@+id/imageView" />
 
     <SearchView
-        android:visibility="gone"
         android:id="@+id/foam_in_searchview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -59,6 +58,7 @@
         android:queryHint="@string/search_hint"
         android:searchHintIcon="@null"
         android:searchIcon="@drawable/ic_search_white"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -72,6 +72,18 @@
         android:layout_marginBottom="16dp"
         android:text="@string/header_foamin_product_code"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:visibility="visible"
+        android:id="@+id/send_image_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_mail_white"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -105,10 +117,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/foam_in_recyclerview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/foam_in_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

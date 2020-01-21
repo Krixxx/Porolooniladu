@@ -68,6 +68,10 @@ public class OrderLineRepository {
         return allOrderNumbers;
     }
 
+    public LiveData<List<OrderLine>> getProblemOrderLines(int orderNumber){
+        return orderLineDao.getProblemOrderLines(orderNumber);
+    }
+
     public void insert(OrderLine orderLine){
         new insertAsyncTask(orderLineDao).execute(orderLine);
     }
