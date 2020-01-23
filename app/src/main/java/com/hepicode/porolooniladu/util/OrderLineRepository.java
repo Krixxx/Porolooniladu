@@ -72,6 +72,14 @@ public class OrderLineRepository {
         return orderLineDao.getProblemOrderLines(orderNumber);
     }
 
+    public LiveData<List<OrderLine>> getAllOrderLinesByOrderNumber(int orderNumber){
+        return orderLineDao.getAllOrderLinesByOrderNumber(orderNumber);
+    }
+
+    public LiveData<List<OrderLine>> getAllCheckedOrderLinesByOrderNumber(int orderNumber){
+        return orderLineDao.getAllCheckedOrderLinesByOrderNumber(orderNumber);
+    }
+
     public void insert(OrderLine orderLine){
         new insertAsyncTask(orderLineDao).execute(orderLine);
     }
@@ -182,4 +190,5 @@ public class OrderLineRepository {
             return null;
         }
     }
+
 }

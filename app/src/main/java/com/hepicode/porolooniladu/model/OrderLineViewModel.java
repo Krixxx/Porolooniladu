@@ -64,13 +64,17 @@ public class OrderLineViewModel extends AndroidViewModel {
         return orderLineRepository.getProblemOrderLines(orderNumber);
     }
 
+    public LiveData<List<OrderLine>> getAllOrderLinesByOrderNumber(int orderNumber){
+        return orderLineRepository.getAllOrderLinesByOrderNumber(orderNumber);
+    }
+
+    public LiveData<List<OrderLine>> getAllCheckedOrderLinesByOrderNumber(int orderNumber){
+        return orderLineRepository.getAllCheckedOrderLinesByOrderNumber(orderNumber);
+    }
+
     public LiveData<List<OrderLine>> getAllUnCheckedSingleOrderLines(int order){
         return getAllLines = Transformations.switchMap(orderLineFilter, orderNumber -> orderLineRepository.getAllUnCheckedSingleOrderLines(orderNumber));
     }
-
-//    public LiveData<List<OrderLine>> getAllUnCheckedSingleOrderLines(int orderNumber){
-//        return orderLineRepository.getAllUnCheckedSingleOrderLines(orderNumber);
-//    }
 
     public LiveData<List<OrderNumber>> getAllOrderNumbers(){
         return allOrderNumbers;
@@ -92,7 +96,7 @@ public class OrderLineViewModel extends AndroidViewModel {
         orderLineRepository.insertNr(orderNumber);
     }
 
-    public void deleteAOrderNr(OrderNumber orderNumber){
+    public void deleteAOrderNumber(OrderNumber orderNumber){
         orderLineRepository.deleteNr(orderNumber);
     }
 }

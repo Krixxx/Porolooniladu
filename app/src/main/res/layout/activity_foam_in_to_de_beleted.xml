@@ -6,4 +6,85 @@
     android:layout_height="match_parent"
     tools:context=".FoamInToDeBeletedActivity">
 
+    <LinearLayout
+        android:layout_width="500dp"
+        android:layout_height="500dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/colorAccent">
+
+            <TextView
+                style="@style/FoamInHeaderAttr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
+                android:text="@string/fi_tbt_order_nuber" />
+
+            <TextView
+                style="@style/FoamInHeaderAttr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/vahe"
+                android:text="@string/fi_tbt_checked_quantity" />
+
+            <TextView
+                android:id="@+id/vahe"
+                style="@style/FoamInHeaderAttr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/tellitud"
+                android:text="@string/fi_tbt_separator" />
+
+            <TextView
+                android:id="@+id/tellitud"
+                style="@style/FoamInHeaderAttr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/taidetud"
+                android:text="@string/fi_tbt_ordered_qty" />
+
+            <TextView
+                android:id="@+id/taidetud"
+                style="@style/FoamInHeaderAttr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:paddingStart="16dp"
+                android:paddingEnd="8dp"
+                android:text="@string/fi_tbt_filled" />
+
+
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/fi_tbt_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/del_info_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_info_black"
+        app:backgroundTint="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

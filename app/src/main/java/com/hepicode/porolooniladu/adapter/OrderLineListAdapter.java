@@ -70,11 +70,11 @@ public class OrderLineListAdapter extends RecyclerView.Adapter<OrderLineListAdap
             orderLineViewHolder.okCheckBox.setOnCheckedChangeListener(null);
             orderLineViewHolder.okCheckBox.setChecked(false);
 
-            if (current.getIsArrived() == 2 || current.getIsArrived() == 3){
+            if (current.getIsArrived() == 2 || current.getIsArrived() == 3) {
 
                 orderLineViewHolder.singleLineLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.partiallyArrivedPosition));
 
-            }else if (current.getIsArrived() == 0){
+            } else if (current.getIsArrived() == 0) {
 
                 orderLineViewHolder.singleLineLayout.setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent));
             }
@@ -122,7 +122,6 @@ public class OrderLineListAdapter extends RecyclerView.Adapter<OrderLineListAdap
         }
 
 
-
         @Override
         public void onClick(View view) {
 
@@ -167,30 +166,17 @@ public class OrderLineListAdapter extends RecyclerView.Adapter<OrderLineListAdap
         protected FilterResults performFiltering(CharSequence charSequence) {
 
             String charString = charSequence.toString();
-            if (charString.isEmpty()){
+            if (charString.isEmpty()) {
                 orderLineListFull = orderLineList;
-            }else {
+            } else {
                 List<OrderLine> filteredList = new ArrayList<>();
-                for (OrderLine line: orderLineList){
-                    if (line.getProductCode().toLowerCase().contains(charString.toLowerCase())){
+                for (OrderLine line : orderLineList) {
+                    if (line.getProductCode().toLowerCase().contains(charString.toLowerCase())) {
                         filteredList.add(line);
                     }
                 }
                 orderLineListFull = filteredList;
             }
-//            List<OrderLine> filteredList = new ArrayList<>();
-//
-//            if (charSequence == null || charSequence.length() == 0){
-//                filteredList.addAll(orderLineListFull);
-//            }else {
-//                String filterPattern = charSequence.toString().toLowerCase().trim();
-//
-//                for (OrderLine orderLine: orderLineListFull){
-//                    if (orderLine.getProductCode().toLowerCase().contains(filterPattern)){
-//                        filteredList.add(orderLine);
-//                    }
-//                }
-//            }
 
             FilterResults results = new FilterResults();
             results.values = orderLineListFull;
@@ -200,8 +186,6 @@ public class OrderLineListAdapter extends RecyclerView.Adapter<OrderLineListAdap
 
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-//            orderLineList.clear();
-//            orderLineList.addAll((List)filterResults.values);
 
             orderLineListFull = (ArrayList<OrderLine>) filterResults.values;
 

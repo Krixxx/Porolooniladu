@@ -74,18 +74,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <ImageButton
-        android:visibility="visible"
-        android:id="@+id/send_image_button"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:src="@drawable/ic_mail_white"
-        android:background="@android:color/transparent"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <TextView
         android:id="@+id/textView4"
         style="@style/FoamInHeaderAttr"
@@ -123,5 +111,16 @@
             android:layout_height="match_parent" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_mail_white"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

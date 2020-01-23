@@ -86,6 +86,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         });
+
+        orderLineViewModel.getAllOrderLines().observe(this, new Observer<List<OrderLine>>() {
+            @Override
+            public void onChanged(List<OrderLine> orderLineList) {
+
+            }
+        });
     }
 
     @Override
@@ -94,14 +101,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()) {
             case R.id.btn_foam_in:
 
-                if (spinnerItems.size() != 0){
+                if (spinnerItems.size() != 0) {
 
                     Intent intent = new Intent(MainActivity.this, FoamInActivity.class);
                     intent.putStringArrayListExtra("spinner_list", spinnerItems);
                     startActivity(intent);
                     break;
 
-                }else {
+                } else {
 
                     Toast.makeText(this, R.string.no_orders_warning, Toast.LENGTH_SHORT).show();
                     break;
@@ -127,15 +134,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.btn_foamin_edit:
 
-                Intent intent1 = new Intent(MainActivity.this, FoamInDeletedActivity.class);
-                startActivity(intent1);
-                break;
+                if (spinnerItems.size() != 0) {
+
+                    Intent intent1 = new Intent(MainActivity.this, FoamInDeletedActivity.class);
+                    startActivity(intent1);
+                    break;
+
+                } else {
+
+                    Toast.makeText(this, "Pole ühtegi tellimust, mida muuta!", Toast.LENGTH_SHORT).show();
+                }
 
             case R.id.btn_foamin_deleted:
 
-                Intent intent2 = new Intent(MainActivity.this, FoamInToDeBeletedActivity.class);
-                startActivity(intent2);
-                break;
+                if (spinnerItems.size() != 0) {
+
+                    Intent intent2 = new Intent(MainActivity.this, FoamInToDeBeletedActivity.class);
+                    startActivity(intent2);
+                    break;
+
+                } else {
+                    Toast.makeText(this, "Pole ühtegi tellimust, mida kustutada!", Toast.LENGTH_SHORT).show();
+                }
+
 
             default:
                 break;

@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hepicode.porolooniladu.adapter.OrderLineListAdapter;
 import com.hepicode.porolooniladu.model.OrderLine;
 import com.hepicode.porolooniladu.model.OrderLineViewModel;
@@ -35,12 +36,12 @@ import com.hepicode.porolooniladu.util.FoamInBottomSheetDialog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class FoamInActivity extends AppCompatActivity implements FoamInBottomSheetDialog.BottomSheetListener {
 
     private TextView dateText;
     private Spinner spinner;
-    private ImageButton sendReportButton;
     private List<String> spinnerItems = new ArrayList<>();
     private int selection;
     private RecyclerView recyclerView;
@@ -49,9 +50,11 @@ public class FoamInActivity extends AppCompatActivity implements FoamInBottomShe
     private SwipeRefreshLayout swipeRefreshLayout;
     private ArrayAdapter<String> adapter;
     private List<OrderLine> currentOrderLines = new ArrayList<>();
+    private List<OrderLine> activeOrderLines = new ArrayList<>();
     private SearchView searchView;
     private OrderLine mOrderLine;
     private DividerItemDecoration dividerItemDecoration;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +62,7 @@ public class FoamInActivity extends AppCompatActivity implements FoamInBottomShe
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_foam_in);
 
-        Intent intent = getIntent();
-        spinnerItems = intent.getStringArrayListExtra("spinner_list");
+        spinnerItems = getIntent().getStringArrayListExtra("spinner_list");
 
         initViews();
 
@@ -81,6 +83,63 @@ public class FoamInActivity extends AppCompatActivity implements FoamInBottomShe
         } else {
             finish();
         }
+
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                loadReportOrderLines(selection);
+
+                if (!currentOrderLines.isEmpty()) {
+
+                    StringBuilder sb = new StringBuilder();
+                    int i = 1;
+
+                    for (OrderLine line : currentOrderLines) {
+
+                        if (line.getIsArrived() == 2) {
+
+                            sb.append(i + ") " + line.getProductCode() + " - ordered " + line.getOrderedQuantity() +
+                                    " sets, we received " + line.getArrivedQuantity() + " sets. Details are missing!\n");
+
+                            i++;
+
+                        } else if (line.getIsArrived() == 3) {
+
+                            sb.append(i + ") " + line.getProductCode() + " - ordered " + line.getOrderedQuantity() +
+                                    " sets, we received " + line.getArrivedQuantity() + " sets.\n");
+
+                            i++;
+                        }
+                    }
+
+                    Log.d("MAIN_STRINGBUILDER", "onClick: " + sb);
+
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+
+//                    String uriText = "mailto:" + Uri.encode("") +
+//                            "?subject=" + Uri.encode("Problems with PO " + selection) +
+//                            "&body=" + Uri.encode("Hello\n\n\nWe discovered following problems:\n\n" + sb);
+
+                    String message = "Hello\n\n\nWe discovered following problems:\n\n" + sb;
+
+//                    Uri uri = Uri.parse(uriText);
+//
+//                    intent.setDataAndType(uri, "text/plain");
+
+                        intent.setType("text/html");
+                        intent.putExtra(Intent.EXTRA_SUBJECT, "Problems with PO " + selection);
+                        intent.putExtra(Intent.EXTRA_TEXT, message);
+
+                    startActivity(Intent.createChooser(intent, getString(R.string.send_report)));
+
+                } else {
+                    Toast.makeText(FoamInActivity.this, R.string.no_report_lines, Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
 
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -117,6 +176,7 @@ public class FoamInActivity extends AppCompatActivity implements FoamInBottomShe
                 orderLineViewModel.setOrderLineFilter(selection);
 
                 loadReportOrderLines(selection);
+
             }
 
             @Override
@@ -125,55 +185,6 @@ public class FoamInActivity extends AppCompatActivity implements FoamInBottomShe
             }
 
         });
-
-        sendReportButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                loadReportOrderLines(selection);
-
-                if (currentOrderLines != null) {
-
-                    StringBuilder sb = new StringBuilder();
-                    int i = 1;
-
-                    for (OrderLine line : currentOrderLines) {
-
-                        if (line.getIsArrived() == 2) {
-
-                            sb.append(i + ") " + line.getProductCode() + " - ordered " + line.getOrderedQuantity() +
-                                    " sets, we received " + line.getArrivedQuantity() + " sets. Details are missing!\n");
-
-                            i++;
-
-                        } else if (line.getIsArrived() == 3) {
-
-                            sb.append(i + ") " + line.getProductCode() + " - ordered " + line.getOrderedQuantity() +
-                                    " sets, we received " + line.getArrivedQuantity() + " sets.\n");
-
-                            i++;
-                        }
-                    }
-
-                    Log.d("MAIN_STRINGBUILDER", "onClick: " + sb);
-
-                    Intent intent1 = new Intent(Intent.ACTION_SENDTO);
-
-                    String uriText = "mailto:" + Uri.encode("") +
-                            "?subject=" + Uri.encode("Problems with PO " + selection) +
-                            "&body=" + Uri.encode("Hello\n\nWe discovered following problems:\n\n" + sb);
-
-                    Uri uri = Uri.parse(uriText);
-
-                    intent1.setData(uri);
-
-                    startActivity(Intent.createChooser(intent1, getString(R.string.send_report)));
-
-                }
-
-            }
-        });
-
     }
 
     private void initViews() {
@@ -181,7 +192,7 @@ public class FoamInActivity extends AppCompatActivity implements FoamInBottomShe
         swipeRefreshLayout = findViewById(R.id.refresh_layout);
         searchView = findViewById(R.id.foam_in_searchview);
         dateText = findViewById(R.id.date_textview);
-        sendReportButton = findViewById(R.id.send_image_button);
+        fab = findViewById(R.id.fab);
 
         recyclerView = findViewById(R.id.foam_in_recyclerview);
 
@@ -213,23 +224,38 @@ public class FoamInActivity extends AppCompatActivity implements FoamInBottomShe
                 String lines = getString(R.string.lines_title) + " " + orderLineListAdapter.getItemCount();
                 dateText.setText(lines);
 
-                //TODO Check current orderlines. If they are only 2 and 3 status, then display imagebutton.
-//                currentOrderLines.clear();
-//                currentOrderLines = orderLines;
-//                for (OrderLine line: orderLines){
-////                    Log.d("ORDERLINE_MAIN", "onChanged: " + line.getOrderNumber());
-////
-////                    Log.d("ORDERLINE_MAIN", "onChanged: " + line.getProductCode());
-////                }
+                //Check current orderlines. If they are only 2 and 3 status, then display imagebutton.
+                iterateThroughList(orderLines);
+
+
+//                for (OrderLine line: orderLines){ //Check for how many lines are loaded and what order.
+//                    Log.d("ORDERLINE_MAIN", "onChanged: " + line.getOrderNumber() + " " + line.getProductCode());
+//                }
             }
+
         });
 
-//        int i;
-//
-//        for (OrderLine line: currentOrderLines){
-//            i = line.getIsArrived();
-//        }
 
+    }
+
+    private void iterateThroughList(List<OrderLine> activeOrderLines) {
+
+        int i = 0;
+
+        for (OrderLine line: activeOrderLines){
+
+            if (line.getIsArrived() == 0 || line.getIsArrived() == 1){
+                i++;
+            }
+        }
+
+        if (i == 0){
+            fab.show();
+        }else {
+            fab.hide();
+        }
+
+        Log.d("MAIN_NOT_CHECKED_LINES", "iterateThroughList: " + i);
     }
 
     @Override
@@ -251,7 +277,7 @@ public class FoamInActivity extends AppCompatActivity implements FoamInBottomShe
         }
 
         if (isArrived == 0) {
-            Toast.makeText(this, "Olek taastatud!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.position_restored, Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -272,5 +298,11 @@ public class FoamInActivity extends AppCompatActivity implements FoamInBottomShe
         });
 
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

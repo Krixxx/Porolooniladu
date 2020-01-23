@@ -18,4 +18,13 @@
     <string name="no_orders_warning">Pole ühtegi tellimust!</string>
     <string name="order_no_title">Tellimuse nr:</string>
     <string name="send_report">Saada kokkuvõte e-mailiga...</string>
+    <string name="position_restored">Olek taastatud!</string>
+    <string name="no_report_lines">Pole vigadega ridu!</string>
+    <string name="product_code_sample">P-FOAM-A55</string>
+    <string name="fi_tbt_checked_quantity">Saabunud</string>
+    <string name="fi_tbt_separator">/</string>
+    <string name="fi_tbt_ordered_qty">Tellitud</string>
+    <string name="fi_tbt_filled">Täidetud</string>
+    <string name="fi_tbt_order_nuber">Tellimuse number</string>
+    <string name="no_finished_orders">Pole ühtegi tellimust!</string>
 </resources>
