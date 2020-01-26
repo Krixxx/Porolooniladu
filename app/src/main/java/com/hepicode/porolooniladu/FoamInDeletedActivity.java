@@ -89,11 +89,9 @@ public class FoamInDeletedActivity extends AppCompatActivity {
                 //update saved copy of lines
                 orderLineDeletedListAdapter.setOrderLines(orderLines);
 
-                for (OrderLine line: orderLines){
-                    Log.d("ORDERLINE_ARRIVED", "onChanged: " + line.getOrderNumber());
-
-                    Log.d("ORDERLINE_ARRIVED", "onChanged: " + line.getProductCode());
-                }
+//                for (OrderLine line: orderLines){
+//                    Log.d("ORDERLINE_ARRIVED", "onChanged: " + line.getOrderNumber() + line.getProductCode());
+//                }
             }
         });
 

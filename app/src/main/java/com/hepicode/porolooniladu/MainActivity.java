@@ -11,12 +11,16 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Filter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +34,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -125,10 +130,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.btn_foamin_download:
-                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_STORAGE);
-                } else {
-                    downloadFile();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_STORAGE);
+                    } else {
+                        downloadFile();
+                    }
                 }
                 break;
 
@@ -141,7 +148,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
 
                 } else {
-
                     Toast.makeText(this, "Pole ühtegi tellimust, mida muuta!", Toast.LENGTH_SHORT).show();
                 }
 
@@ -170,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (requestCode == PERMISSION_REQUEST_STORAGE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
+                downloadFile();
             } else {
                 Toast.makeText(this, "Permission not granted", Toast.LENGTH_SHORT).show();
 
@@ -178,12 +184,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    //select file from storage
+    public void downloadFile() {
+        Intent intentDownload = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intentDownload.addCategory(Intent.CATEGORY_OPENABLE);
+        intentDownload.setType("text/*");
+        startActivityForResult(intentDownload, READ_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
+
+                Uri uri = data.getData();
+
+                String fullFilename = getFileName(uri);
+                String[] filenameWithPath = fullFilename.split(".txt");
+                filename = filenameWithPath[0];
+
+                if (spinnerItems.contains(filename)) {
+                    Toast.makeText(this, R.string.txt_order_already_loaded, Toast.LENGTH_SHORT).show();
+                } else {
+                    readText(uri);
+                }
+        }
+    }
+
     //read content of the file
-    public void readText(String input) {
-        File file = new File(input);
+    public void readText(Uri uri) {
 
         try {
-            BufferedReader br = new BufferedReader(new FileReader(file));
+            BufferedReader br = new BufferedReader(new InputStreamReader(getContentResolver().openInputStream(uri)));
+
             String line;
             int i = 0;
             while ((line = br.readLine()) != null) {
@@ -204,46 +238,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             Toast.makeText(this, "Tellimus " + filename + " laetud. Ridu kokku: " + i, Toast.LENGTH_SHORT).show();
 
-        } catch (IOException e) {
+        }catch (Exception e){
             e.printStackTrace();
             Toast.makeText(this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+
         }
     }
 
-
-    //select file from storage
-    public void downloadFile() {
-        Intent intentDownload = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intentDownload.addCategory(Intent.CATEGORY_OPENABLE);
-        intentDownload.setType("text/*");
-        startActivityForResult(intentDownload, READ_REQUEST_CODE);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            if (data != null) {
-                Uri uri = data.getData();
-                File file = new File(uri.getPath());//create path from uri
-                String[] split = file.getPath().split(":");//split the path.
-                String filePath = split[1];//get the final path
-
-                //get filename for naming table.
-                String[] address = filePath.split("/");
-                String fullFilename = address[address.length - 1];
-                String[] filenameWithPath = fullFilename.split(".txt");
-                filename = filenameWithPath[0];
-
-                if (spinnerItems.contains(filename)) {
-                    Toast.makeText(this, R.string.txt_order_already_loaded, Toast.LENGTH_SHORT).show();
-                } else {
-                    readText(filePath);
+    private String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
                 }
-
-
+            } finally {
+                cursor.close();
             }
         }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
     }
+
 }
