@@ -148,7 +148,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
 
                 } else {
-                    Toast.makeText(this, "Pole ühtegi tellimust, mida muuta!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.nothing_to_edit, Toast.LENGTH_SHORT).show();
+                    break;
                 }
 
             case R.id.btn_foamin_deleted:
@@ -160,7 +161,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
 
                 } else {
-                    Toast.makeText(this, "Pole ühtegi tellimust, mida kustutada!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.nothing_to_delete, Toast.LENGTH_SHORT).show();
+                    break;
                 }
 
 

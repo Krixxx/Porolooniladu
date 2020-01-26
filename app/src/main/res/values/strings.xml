@@ -27,4 +27,6 @@
     <string name="fi_tbt_filled">Täidetud</string>
     <string name="fi_tbt_order_nuber">Tellimuse number</string>
     <string name="no_finished_orders">Pole ühtegi tellimust!</string>
+    <string name="nothing_to_edit">Pole ühtegi tellimust, mida muuta!</string>
+    <string name="nothing_to_delete">Pole ühtegi tellimust, mida kustutada!</string>
 </resources>
