@@ -15,43 +15,42 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
+import android.os.Handler;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Filter;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hepicode.porolooniladu.model.FoamOutLine;
+import com.hepicode.porolooniladu.model.FoamOutWeekNumber;
 import com.hepicode.porolooniladu.model.OrderLine;
 import com.hepicode.porolooniladu.model.OrderLineViewModel;
 import com.hepicode.porolooniladu.model.OrderNumber;
-import com.hepicode.porolooniladu.util.Util;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final int READ_REQUEST_CODE = 42;
+    private static final int READ_REQUEST_FOAM_IN_CODE = 42;
+    public static final int READ_REQUEST_FOAM_OUT_CODE = 50;
     public static final int DELETE_REQUEST_CODE = 55;
     private static final int PERMISSION_REQUEST_STORAGE = 1000;
     Button foamInButton, foamOutButton, fabricOutButton;
-    ImageButton foamInDownload, foamInDeleted, foamInEdit;
-    private int quantity, arrivedQuantity = 0, isArrived = 0;
-    private String productCode, filename;
+    ImageButton foamInDownload, foamInDeleted, foamInEdit, foamOutDownload, foamOutEdit, foamOutDeleted;
+    private int quantity, foamOutQuantity, arrivedQuantity = 0, isArrived = 0, isGivenOut = 0, workerNumber = 0;
+    private String foamInProductCode, filename, foamOutProductCode, foamOutFilename, foamOutDate, foamOutWeekNumber;
     private OrderLineViewModel orderLineViewModel;
     private OrderLine orderLine;
+    private FoamOutLine foamOutLine;
     private OrderNumber orderNumber;
-    private ArrayList<String> spinnerItems = new ArrayList<>();
-    private int firstOrderNum;
+    private FoamOutWeekNumber foamOutWeekNr;
+    private ArrayList<String> foamInSpinnerItems = new ArrayList<>();
+    private ArrayList<String> foamOutSpinnerItems = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +66,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         foamInDownload = findViewById(R.id.btn_foamin_download);
         foamInEdit = findViewById(R.id.btn_foamin_edit);
         foamInDeleted = findViewById(R.id.btn_foamin_deleted);
+        foamOutDownload = findViewById(R.id.btn_foamout_download);
+        foamOutEdit = findViewById(R.id.btn_foamout_edit);
+        foamOutDeleted = findViewById(R.id.btn_foamout_deleted);
 
         foamInButton.setOnClickListener(this);
         foamOutButton.setOnClickListener(this);
@@ -74,6 +76,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         foamInDownload.setOnClickListener(this);
         foamInEdit.setOnClickListener(this);
         foamInDeleted.setOnClickListener(this);
+        foamOutDownload.setOnClickListener(this);
+        foamOutEdit.setOnClickListener(this);
+        foamOutDeleted.setOnClickListener(this);
 
         orderLineViewModel.getAllOrderNumbers().observe(this, new Observer<List<OrderNumber>>() {
             @Override
@@ -81,23 +86,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 if (orderNumbers != null) {
 
-                    spinnerItems.clear();
+                    foamInSpinnerItems.clear();
 
                     for (OrderNumber number : orderNumbers) {
                         String num = String.valueOf(number.getOrderNumber());
-                        spinnerItems.add(num);
+                        foamInSpinnerItems.add(num);
                     }
                 }
 
             }
         });
 
-        orderLineViewModel.getAllOrderLines().observe(this, new Observer<List<OrderLine>>() {
+        orderLineViewModel.getAllWeekNumbers().observe(this, new Observer<List<FoamOutWeekNumber>>() {
             @Override
-            public void onChanged(List<OrderLine> orderLineList) {
+            public void onChanged(List<FoamOutWeekNumber> foamOutWeekNumbers) {
+
+                if (foamOutWeekNumbers != null){
+
+                    foamOutSpinnerItems.clear();
+
+                    for (FoamOutWeekNumber number: foamOutWeekNumbers){
+                        String num = number.getWeekNumber();
+                        foamOutSpinnerItems.add(num);
+                    }
+                }
 
             }
         });
+
+//        orderLineViewModel.getAllOrderLines().observe(this, new Observer<List<OrderLine>>() {
+//            @Override
+//            public void onChanged(List<OrderLine> orderLineList) {
+//
+//            }
+//        });
     }
 
     @Override
@@ -106,11 +128,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()) {
             case R.id.btn_foam_in:
 
-                if (spinnerItems.size() != 0) {
+                if (foamInSpinnerItems.size() != 0) {
 
                     Intent intent = new Intent(MainActivity.this, FoamInActivity.class);
-                    intent.putStringArrayListExtra("spinner_list", spinnerItems);
+                    intent.putStringArrayListExtra("spinner_list", foamInSpinnerItems);
                     startActivity(intent);
+
                     break;
 
                 } else {
@@ -121,8 +144,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.btn_foam_out:
 
-                Toast.makeText(this, R.string.toast_nothing_to_show, Toast.LENGTH_SHORT).show();
-                break;
+                if (foamOutSpinnerItems.size() != 0){
+
+                    Intent intent = new Intent(MainActivity.this, FoamOutActivity.class);
+                    intent.putStringArrayListExtra("spinner_list", foamOutSpinnerItems);
+                    startActivity(intent);
+                    break;
+
+                } else {
+
+                    Toast.makeText(this, R.string.txt_no_plans_loaded, Toast.LENGTH_SHORT).show();
+                    break;
+                }
+
+
 
             case R.id.btn_fbrcs_out:
 
@@ -134,14 +169,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                         requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_STORAGE);
                     } else {
-                        downloadFile();
+                        downloadFile(READ_REQUEST_FOAM_IN_CODE);
                     }
                 }
                 break;
 
             case R.id.btn_foamin_edit:
 
-                if (spinnerItems.size() != 0) {
+                if (foamInSpinnerItems.size() != 0) {
 
                     Intent intent1 = new Intent(MainActivity.this, FoamInDeletedActivity.class);
                     startActivity(intent1);
@@ -154,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.btn_foamin_deleted:
 
-                if (spinnerItems.size() != 0) {
+                if (foamInSpinnerItems.size() != 0) {
 
                     Intent intent2 = new Intent(MainActivity.this, FoamInToDeBeletedActivity.class);
                     startActivity(intent2);
@@ -165,7 +200,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 }
 
+            case R.id.btn_foamout_download:
 
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_STORAGE);
+                    } else {
+                        downloadFile(READ_REQUEST_FOAM_OUT_CODE);
+                    }
+                }
+                break;
+
+            case R.id.btn_foamout_edit:
+                break;
+
+            case R.id.btn_foamout_deleted:
+
+                if (foamOutSpinnerItems.size() != 0) {
+
+                    Intent intent3 = new Intent(MainActivity.this, FoamOutToBeDeletedActivity.class);
+                    startActivity(intent3);
+                    break;
+
+                } else {
+                    Toast.makeText(this, R.string.nothing_to_delete, Toast.LENGTH_SHORT).show();
+                    break;
+                }
             default:
                 break;
         }
@@ -178,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (requestCode == PERMISSION_REQUEST_STORAGE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                downloadFile();
+//                downloadFile();
             } else {
                 Toast.makeText(this, "Permission not granted", Toast.LENGTH_SHORT).show();
 
@@ -187,31 +247,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     //select file from storage
-    public void downloadFile() {
+    public void downloadFile(int requestCode) {
         Intent intentDownload = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intentDownload.addCategory(Intent.CATEGORY_OPENABLE);
         intentDownload.setType("text/*");
-        startActivityForResult(intentDownload, READ_REQUEST_CODE);
+        startActivityForResult(intentDownload, requestCode);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
+        if (requestCode == READ_REQUEST_FOAM_IN_CODE && resultCode == Activity.RESULT_OK && data != null) {
 
-                Uri uri = data.getData();
+            Uri uri = data.getData();
 
-                String fullFilename = getFileName(uri);
-                String[] filenameWithPath = fullFilename.split(".txt");
-                filename = filenameWithPath[0];
+            String fullFilename = getFileName(uri);
+            String[] filenameWithPath = fullFilename.split(".txt");
+            filename = filenameWithPath[0];
 
-                if (spinnerItems.contains(filename)) {
-                    Toast.makeText(this, R.string.txt_order_already_loaded, Toast.LENGTH_SHORT).show();
-                } else {
-                    readText(uri);
-                }
+            if (foamInSpinnerItems.contains(filename)) {
+                Toast.makeText(this, R.string.txt_order_already_loaded, Toast.LENGTH_SHORT).show();
+            } else {
+                readText(uri);
+            }
+        } else if (requestCode == READ_REQUEST_FOAM_OUT_CODE && resultCode == Activity.RESULT_OK && data != null) {
+
+            Uri uri = data.getData();
+
+            String fullFilename = getFileName(uri);
+            String[] filenameWithPath = fullFilename.split(".txt");
+            foamOutFilename = filenameWithPath[0];
+
+            if (foamOutSpinnerItems.contains(foamOutFilename)) {
+                Toast.makeText(this, R.string.txt_list_already_loaded, Toast.LENGTH_SHORT).show();
+            } else {
+                readFoamOutFile(uri);
+            }
         }
+
     }
 
     //read content of the file
@@ -225,18 +299,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             while ((line = br.readLine()) != null) {
 
                 String[] row = line.split(",");
-                productCode = row[0];
+                foamInProductCode = row[0];
                 quantity = Integer.valueOf(row[1]);
                 i++;
 
-                orderLine = new OrderLine(productCode, quantity, arrivedQuantity, isArrived, Integer.valueOf(filename));
+                orderLine = new OrderLine(foamInProductCode, quantity, arrivedQuantity, isArrived, Integer.valueOf(filename));
                 orderLineViewModel.insert(orderLine);
             }
             br.close();
 
             orderNumber = new OrderNumber(Integer.valueOf(filename));
             orderLineViewModel.insertNr(orderNumber);
-            spinnerItems.add(String.valueOf(orderNumber));
+            foamInSpinnerItems.add(String.valueOf(orderNumber));
 
             Toast.makeText(this, "Tellimus " + filename + " laetud. Ridu kokku: " + i, Toast.LENGTH_SHORT).show();
 
@@ -245,6 +319,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
 
         }
+    }
+
+    private void readFoamOutFile(Uri uri) {
+
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(getContentResolver().openInputStream(uri)));
+
+            String line;
+            int i = 0;
+            while ((line = br.readLine()) != null) {
+
+                String[] row = line.split(",");
+                foamOutProductCode = row[0];
+                foamOutQuantity = Integer.valueOf(row[1]);
+                foamOutDate = row[2];
+                i++;
+
+                foamOutLine = new FoamOutLine(foamOutProductCode, foamOutQuantity, foamOutDate, isGivenOut, workerNumber, foamOutFilename);
+                orderLineViewModel.insertFoamOutLine(foamOutLine);
+            }
+            br.close();
+
+            foamOutWeekNr = new FoamOutWeekNumber(foamOutFilename);
+            orderLineViewModel.insertFoamOutWeekNumber(foamOutWeekNr);
+            foamOutSpinnerItems.add(String.valueOf(foamOutWeekNr));
+
+            Toast.makeText(this, foamOutFilename + " plaan laetud. Ridu kokku: " + i, Toast.LENGTH_SHORT).show();
+
+        }catch (Exception e){
+            e.printStackTrace();
+            Toast.makeText(this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+
+        }
+
     }
 
     private String getFileName(Uri uri) {

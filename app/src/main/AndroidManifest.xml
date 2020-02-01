@@ -11,7 +11,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FoamInToDeBeletedActivity"></activity>
+        <activity android:name=".FoamOutToBeDeletedActivity"></activity>
+        <activity
+            android:name=".FoamOutActivity"
+            android:theme="@style/AppThemeNoActionBar" />
+        <activity android:name=".FoamInToDeBeletedActivity" />
         <activity
             android:name=".FoamInDeletedActivity"
             android:theme="@style/AppThemeNoActionBar" />

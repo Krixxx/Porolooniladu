@@ -12,6 +12,9 @@
     <color name="mainActivityButtonText">#FFFFFF</color>
 
     <color name="partiallyArrivedPosition">#FCE4EC</color>
+    <color name="onDatePosition">#E8F5E9</color>
+    <color name="previousDatePosition">#F8BBD0</color>
+    <color name="onSameDatePosition">#C8E6C9</color>
 
     <color name="white">#FFFFFF</color>
 </resources>

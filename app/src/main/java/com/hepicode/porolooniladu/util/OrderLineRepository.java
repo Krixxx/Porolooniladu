@@ -6,9 +6,14 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
+import com.hepicode.porolooniladu.data.FoamOutLineDao;
+import com.hepicode.porolooniladu.data.FoamOutWeekDao;
+import com.hepicode.porolooniladu.data.FoamOutWeekDao_Impl;
 import com.hepicode.porolooniladu.data.OrderLineDao;
 import com.hepicode.porolooniladu.data.OrderListDatabase;
 import com.hepicode.porolooniladu.data.OrderNumberDao;
+import com.hepicode.porolooniladu.model.FoamOutLine;
+import com.hepicode.porolooniladu.model.FoamOutWeekNumber;
 import com.hepicode.porolooniladu.model.OrderLine;
 import com.hepicode.porolooniladu.model.OrderNumber;
 
@@ -17,12 +22,16 @@ import java.util.List;
 public class OrderLineRepository {
 
     private OrderLineDao orderLineDao;
+    private FoamOutLineDao foamOutLineDao;
     private LiveData<List<OrderLine>> allOrderLines;
+    private LiveData<List<FoamOutLine>> allFoamOutLines;
     private LiveData<List<OrderLine>> allCheckedOrderLines;
     private LiveData<List<OrderLine>> allUnCheckedOrderLines;
 
     private OrderNumberDao orderNumberDao;
+    private FoamOutWeekDao weekNumberDao;
     private LiveData<List<OrderNumber>> allOrderNumbers;
+    private LiveData<List<FoamOutWeekNumber>> allFoamOutWeekNumbers;
 
 
     public OrderLineRepository(Application application) {
@@ -30,18 +39,28 @@ public class OrderLineRepository {
         OrderListDatabase db = OrderListDatabase.getDatabase(application);
 
         orderLineDao = db.orderLineDao();
+        foamOutLineDao = db.foamOutLineDao();
         orderNumberDao = db.orderNumberDao();
+        weekNumberDao = db.foamOutWeekDao();
 
         allOrderLines = orderLineDao.getAllOrderLines();
+        allFoamOutLines = foamOutLineDao.getAllFoamOutLines();
         allCheckedOrderLines = orderLineDao.getAllCheckedOrderLines();
         allUnCheckedOrderLines = orderLineDao.getAllUnCheckedOrderLines();
 
         allOrderNumbers = orderNumberDao.getAllOrderNumbers();
+        allFoamOutWeekNumbers = weekNumberDao.getAllFoamOutWeekNumbers();
+
     }
 
     public LiveData<List<OrderLine>> getAllOrderLines() {
 
         return allOrderLines;
+    }
+
+    public LiveData<List<FoamOutLine>> getAllFoamLines(){
+
+        return allFoamOutLines;
     }
 
     public LiveData<List<OrderLine>> getAllCheckedOrderLines() {
@@ -91,8 +110,20 @@ public class OrderLineRepository {
                 + " " + orderLine.getIsArrived() + " " + orderLine.getId());
     }
 
+    public void updateFoamOutLine(FoamOutLine foamOutLine){
+        new updateFOLAsyncTask(foamOutLineDao).execute(foamOutLine);
+    }
+
     public void delete(OrderLine orderLine){
         new deleteAsyncTask(orderLineDao).execute(orderLine);
+    }
+
+    public void deleteFullOrder(int orderNumber){
+        new deleteFullOrderASyncTask(orderLineDao).execute(orderNumber);
+    }
+
+    public void deleteFoamOutWeek(String weekNumber){
+        new deleteFoamWeekASyncTask(foamOutLineDao).execute(weekNumber);
     }
 
     public void insertNr(OrderNumber orderNumber){
@@ -101,6 +132,29 @@ public class OrderLineRepository {
 
     public void deleteNr(OrderNumber orderNumber){
         new deleteNrAsyncTask(orderNumberDao).execute(orderNumber);
+    }
+
+    public void deleteFoamOutWeekNr(FoamOutWeekNumber weekNumber){
+        new deleteFoamWeekNrASyncTask(weekNumberDao).execute(weekNumber);
+    }
+
+    public void insertFoamOutLine(FoamOutLine foamOutLine){
+        new insertFoamOutLineAsyncTask(foamOutLineDao).execute(foamOutLine);
+    }
+
+    public LiveData<List<FoamOutLine>> getAllUncheckedSingleFoamOutLines(String weekNumber){
+        Log.d("FOAM_OUT_REPOSITORY", "getAllUncheckedSingleFoamOutLines: " + weekNumber);
+        return foamOutLineDao.getAllUncheckedSingleFoamOutLines(weekNumber);
+    }
+
+    public LiveData<List<FoamOutWeekNumber>> getAllFoamOutWeekNumbers(){
+
+        return allFoamOutWeekNumbers;
+
+    }
+
+    public void insertFoamOutWeekNr(FoamOutWeekNumber weekNumber){
+        new insertFoamOutWeekNrAsyncTask(weekNumberDao).execute(weekNumber);
     }
 
 
@@ -142,6 +196,25 @@ public class OrderLineRepository {
         }
     }
 
+    private class updateFOLAsyncTask extends AsyncTask<FoamOutLine, Void, Void>{
+
+        private FoamOutLineDao asyncTackDao;
+
+        public updateFOLAsyncTask(FoamOutLineDao dao){
+
+            asyncTackDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(FoamOutLine... params) {
+
+            asyncTackDao.updateFoamOutLine(params[0]); // OrderLine... params will give us a list, therefore we insert first position (0)
+
+            return null;
+        }
+
+    }
+
     private static class deleteAsyncTask extends AsyncTask<OrderLine, Void, Void> {
 
         private OrderLineDao asyncTaskDao;
@@ -153,6 +226,36 @@ public class OrderLineRepository {
         @Override
         protected Void doInBackground(final OrderLine... params) {
             asyncTaskDao.deleteAOrderLine(params[0]);
+            return null;
+        }
+    }
+
+    private static class deleteFullOrderASyncTask extends AsyncTask<Integer, Void, Void>{
+
+        private OrderLineDao asyncTaskDao;
+
+        deleteFullOrderASyncTask(OrderLineDao dao){
+            asyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(Integer... params) {
+            asyncTaskDao.deleteFullOrder(params[0]);
+            return null;
+        }
+    }
+
+    private static class deleteFoamWeekASyncTask extends AsyncTask<String, Void, Void>{
+
+        private FoamOutLineDao asyncTaskDao;
+
+        deleteFoamWeekASyncTask(FoamOutLineDao dao){
+            asyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(String... params) {
+            asyncTaskDao.deleteFullWeek(params[0]);
             return null;
         }
     }
@@ -187,6 +290,59 @@ public class OrderLineRepository {
         @Override
         protected Void doInBackground(final OrderNumber... params) {
             asyncTaskDao.deleteAOrderNumber(params[0]);
+            return null;
+        }
+    }
+
+    private static class deleteFoamWeekNrASyncTask extends AsyncTask<FoamOutWeekNumber, Void, Void>{
+
+        private FoamOutWeekDao asyncTaskDao;
+
+        deleteFoamWeekNrASyncTask(FoamOutWeekDao dao){
+            asyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(FoamOutWeekNumber... params) {
+            asyncTaskDao.deleteAWeekNumber(params[0]);
+            return null;
+        }
+    }
+
+    private class insertFoamOutLineAsyncTask extends AsyncTask<FoamOutLine, Void, Void> {
+
+        private FoamOutLineDao asyncTaskDao;
+
+        public insertFoamOutLineAsyncTask(FoamOutLineDao dao) {
+
+            asyncTaskDao = dao;
+
+        }
+
+        @Override
+        protected Void doInBackground(FoamOutLine... params) {
+
+            asyncTaskDao.insert(params[0]); // FoamOutLine... params will give us a list, therefore we insert first position (0)
+
+            return null;
+        }
+    }
+
+    private class insertFoamOutWeekNrAsyncTask extends AsyncTask<FoamOutWeekNumber, Void, Void> {
+
+        private FoamOutWeekDao asyncTaskDao;
+
+        public insertFoamOutWeekNrAsyncTask(FoamOutWeekDao dao) {
+
+            asyncTaskDao = dao;
+
+        }
+
+        @Override
+        protected Void doInBackground(FoamOutWeekNumber... params) {
+
+            asyncTaskDao.insertWeekNumber(params[0]); // FoamOutWeekNumber... params will give us a list, therefore we insert first position (0)
+
             return null;
         }
     }

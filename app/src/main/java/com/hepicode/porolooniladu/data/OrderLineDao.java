@@ -25,6 +25,9 @@ public interface OrderLineDao {
     @Delete
     void deleteAOrderLine(OrderLine orderLine);
 
+    @Query("DELETE FROM orderline_table WHERE ordernumber_col = :orderNumber")
+    void deleteFullOrder(int orderNumber);
+
     @Query("UPDATE orderline_table SET productcode_col = :productCode AND orderedqty_col = :orderedQuantity AND arrivedqty_col = :arrivedQuantity AND isarrived_col = :isArrived AND ordernumber_col = :orderNumber WHERE id = :id")
     int updateOrderLineItem(int id, String productCode, int orderedQuantity, int arrivedQuantity, int isArrived, int orderNumber);
 

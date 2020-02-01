@@ -37,7 +37,8 @@ public class FoamInDeletedActivity extends AppCompatActivity {
 
         orderLineViewModel = ViewModelProviders.of(this).get(OrderLineViewModel.class);
 
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//        Keep screen on
+//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         initViews();
 

@@ -154,7 +154,7 @@ public class DeleteOrderAdapter extends RecyclerView.Adapter<DeleteOrderAdapter.
         for (OrderLine line : itemsToDelete) {
 
             if (line.getOrderNumber() == orderNumber.getOrderNumber()) {
-                orderLineViewModel.deleteAOrderLine(line);
+                orderLineViewModel.deleteFullOrder(orderNumber.getOrderNumber());
             }
         }
 

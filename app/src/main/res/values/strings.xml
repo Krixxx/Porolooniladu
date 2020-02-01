@@ -29,4 +29,12 @@
     <string name="no_finished_orders">Pole ühtegi tellimust!</string>
     <string name="nothing_to_edit">Pole ühtegi tellimust, mida muuta!</string>
     <string name="nothing_to_delete">Pole ühtegi tellimust, mida kustutada!</string>
+    <string name="txt_list_already_loaded">Väljastusleht juba sisse laetud!</string>
+    <string name="txt_no_plans_loaded">Väljastusi pole laetud</string>
+    <string name="fo_week_nr_txt">Nädala nr:</string>
+    <string name="date_text">Kuupäev</string>
+    <string name="foam_out_given_text">Väljast.</string>
+    <string name="foam_out_planned">Plaan</string>
+    <string name="foam_out_week_nr">Nädala number</string>
+    <string name="foam_out_to_be_deleted_title">Kustutamist ootavad nädalaplaanid</string>
 </resources>

@@ -68,22 +68,20 @@ public class FoamInActivity extends AppCompatActivity implements FoamInBottomShe
 
         orderLineViewModel = ViewModelProviders.of(this).get(OrderLineViewModel.class);
 
-        //Keep screen switched on, when user is working
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-        //Get current date - taken out of app.
-
-//        CalendarModel cal = new CalendarModel();
-//        dateText.setText(cal.getCalendarText());
-
-
         //Load first spinner item data to recyclerview
         if (spinnerItems != null) {
-            loadData(Integer.valueOf(spinnerItems.get(0)));
+            try{
+
+                loadData(Integer.valueOf(spinnerItems.get(0)));
+
+            }catch (Exception e){
+                e.printStackTrace();
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+
         } else {
             finish();
         }
-
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,7 +99,7 @@ public class FoamInActivity extends AppCompatActivity implements FoamInBottomShe
                         if (line.getIsArrived() == 2) {
 
                             sb.append(i + ") " + line.getProductCode() + " - ordered " + line.getOrderedQuantity() +
-                                    " sets, we received " + line.getArrivedQuantity() + " sets. Details are missing!\n");
+                                    " sets, we received " + line.getArrivedQuantity() + " full sets. Details are missing!\n");
 
                             i++;
 
@@ -141,7 +139,6 @@ public class FoamInActivity extends AppCompatActivity implements FoamInBottomShe
             }
         });
 
-
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -171,7 +168,12 @@ public class FoamInActivity extends AppCompatActivity implements FoamInBottomShe
                 ((TextView) adapterView.getChildAt(0)).setTextColor(Color.WHITE);
                 ((TextView) adapterView.getChildAt(0)).setTextSize(20);
 
-                selection = Integer.valueOf(spinner.getSelectedItem().toString());
+                try {
+                    selection = Integer.valueOf(spinner.getSelectedItem().toString());
+                } catch (Exception e){
+                    e.printStackTrace();
+
+                }
 
                 orderLineViewModel.setOrderLineFilter(selection);
 

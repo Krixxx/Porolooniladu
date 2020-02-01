@@ -18,27 +18,38 @@ public class OrderLineViewModel extends AndroidViewModel {
 
     private OrderLineRepository orderLineRepository;
     private LiveData<List<OrderLine>> allOrderLines;
+    private LiveData<List<FoamOutLine>> allFoamOutLines;
     private LiveData<List<OrderLine>> allCheckedOrderLines;
     private LiveData<List<OrderLine>> allUnCheckedOrderLines;
     private LiveData<List<OrderLine>> getAllLines;
+    private LiveData<List<FoamOutLine>> getAllFoamOutLines;
     private final MutableLiveData<Integer> orderLineFilter;
+    private final MutableLiveData<String> weekOutFilter;
 
     private LiveData<List<OrderNumber>> allOrderNumbers;
+    private LiveData<List<FoamOutWeekNumber>> allWeekNumbers;
 
 
     public OrderLineViewModel(@NonNull Application application) {
         super(application);
         orderLineRepository = new OrderLineRepository(application);
         allOrderLines = orderLineRepository.getAllOrderLines();
+        allFoamOutLines = orderLineRepository.getAllFoamLines();
         allCheckedOrderLines = orderLineRepository.getAllCheckedOrderLines();
         allUnCheckedOrderLines = orderLineRepository.getAllUnCheckedOrderLines();
         orderLineFilter = new MutableLiveData<>();
+        weekOutFilter = new MutableLiveData<>();
 
         allOrderNumbers = orderLineRepository.getAllOrderNumbers();
+        allWeekNumbers = orderLineRepository.getAllFoamOutWeekNumbers();
     }
 
     public LiveData<List<OrderLine>> getAllOrderLines(){
         return allOrderLines;
+    }
+
+    public LiveData<List<FoamOutLine>> getAllFoamLines(){
+        return allFoamOutLines;
     }
 
     public LiveData<List<OrderLine>> getAllCheckedOrderLines(){
@@ -54,6 +65,11 @@ public class OrderLineViewModel extends AndroidViewModel {
 
     public void setOrderLineFilter(int orderNumber){
         orderLineFilter.setValue(orderNumber);
+    }
+
+    public void setFoamOutFilter(String weekNumber){
+        weekOutFilter.setValue(weekNumber);
+        Log.d("FOAM_OUT_MODEL_FILTER", "setFoamOutFilter: " + weekNumber);
     }
 
     public LiveData<OrderLine> getAOrderLine(int id){
@@ -76,8 +92,17 @@ public class OrderLineViewModel extends AndroidViewModel {
         return getAllLines = Transformations.switchMap(orderLineFilter, orderNumber -> orderLineRepository.getAllUnCheckedSingleOrderLines(orderNumber));
     }
 
+    public LiveData<List<FoamOutLine>> getAllUncheckedSingleWeekLines(String week){
+        Log.d("FOAM_OUT_VIEWMODEL", "getAllUncheckedSingleWeekLines: " + week);
+        return getAllFoamOutLines = Transformations.switchMap(weekOutFilter, weekNumber -> orderLineRepository.getAllUncheckedSingleFoamOutLines(weekNumber));
+    }
+
     public LiveData<List<OrderNumber>> getAllOrderNumbers(){
         return allOrderNumbers;
+    }
+
+    public LiveData<List<FoamOutWeekNumber>> getAllWeekNumbers(){
+        return allWeekNumbers;
     }
 
     public void insert(OrderLine orderLine){
@@ -88,8 +113,20 @@ public class OrderLineViewModel extends AndroidViewModel {
         orderLineRepository.update(orderLine);
     }
 
+    public void updateFoamOutLine(FoamOutLine foamOutLine){
+        orderLineRepository.updateFoamOutLine(foamOutLine);
+    }
+
     public void deleteAOrderLine(OrderLine orderLine){
         orderLineRepository.delete(orderLine);
+    }
+
+    public void deleteFullOrder(Integer orderNumber){
+        orderLineRepository.deleteFullOrder(orderNumber);
+    }
+
+    public void deleteFoamOutWeek(String weekNumber){
+        orderLineRepository.deleteFoamOutWeek(weekNumber);
     }
 
     public void insertNr(OrderNumber orderNumber){
@@ -98,5 +135,17 @@ public class OrderLineViewModel extends AndroidViewModel {
 
     public void deleteAOrderNumber(OrderNumber orderNumber){
         orderLineRepository.deleteNr(orderNumber);
+    }
+
+    public void deleteFoamOutWeekNr(FoamOutWeekNumber weekNumber){
+        orderLineRepository.deleteFoamOutWeekNr(weekNumber);
+    }
+
+    public void insertFoamOutLine(FoamOutLine foamOutLine){
+        orderLineRepository.insertFoamOutLine(foamOutLine);
+    }
+
+    public void insertFoamOutWeekNumber(FoamOutWeekNumber weekNumber){
+        orderLineRepository.insertFoamOutWeekNr(weekNumber);
     }
 }

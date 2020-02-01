@@ -9,9 +9,15 @@ import java.util.Date;
 public class CalendarModel {
 
     private Date calendar;
-    private String myFormat;
+    private String myFormat, incomingDate, newFormat;
     private SimpleDateFormat format;
     private String calendarText;
+
+    /*
+    for using this class:
+        CalendarModel cal = new CalendarModel();
+        String currentDate = cal.getCalendarText();
+     */
 
     public CalendarModel() {
     }
@@ -44,5 +50,14 @@ public class CalendarModel {
 
         return calendarText;
 
+    }
+
+    public String makeDateCorrect(String date){
+
+        incomingDate = "dd.MM.yyyy";
+        myFormat = "";
+
+
+        return newFormat;
     }
 }
