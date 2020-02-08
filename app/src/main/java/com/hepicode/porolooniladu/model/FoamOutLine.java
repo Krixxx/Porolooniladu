@@ -18,11 +18,14 @@ public class FoamOutLine {
     @ColumnInfo(name = "outqty_col")
     private int outQuantity;
 
+    @ColumnInfo(name = "partialqty_col")
+    private int partialQuantity;
+
     @ColumnInfo(name = "dateout_col")
     private String dateOut;
 
     @ColumnInfo(name = "isgivenout_col")
-    private int isGivenOut;
+    private int isGivenOut;  //isGivenOut has three statuses: 0-not given out, 1 - all given out, 2 - partially given out
 
     @ColumnInfo(name = "workernumber_col")
     private int workerNumber;
@@ -30,12 +33,12 @@ public class FoamOutLine {
     @ColumnInfo(name = "weeknumber_col")
     private String weekNumber;
 
-    public FoamOutLine(@NonNull String productCode, int outQuantity, String dateOut, int isGivenOut, int workerNumber, String weekNumber) {
+    public FoamOutLine(@NonNull String productCode, int outQuantity, int partialQuantity, String dateOut, int isGivenOut, String weekNumber) {
         this.productCode = productCode;
         this.outQuantity = outQuantity;
+        this.partialQuantity = partialQuantity;
         this.dateOut = dateOut;
         this.isGivenOut = isGivenOut;
-        this.workerNumber = workerNumber;
         this.weekNumber = weekNumber;
     }
 
@@ -62,6 +65,14 @@ public class FoamOutLine {
 
     public void setOutQuantity(int outQuantity) {
         this.outQuantity = outQuantity;
+    }
+
+    public int getPartialQuantity() {
+        return partialQuantity;
+    }
+
+    public void setPartialQuantity(int partialQuantity) {
+        this.partialQuantity = partialQuantity;
     }
 
     public String getDateOut() {

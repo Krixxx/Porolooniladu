@@ -127,31 +127,34 @@ public class OrderLineListAdapter extends RecyclerView.Adapter<OrderLineListAdap
 
             int position = getAdapterPosition();
 
-            OrderLine line = orderLineListFull.get(position);
+            if (position != RecyclerView.NO_POSITION) {
 
-            switch (view.getId()) {
+                OrderLine line = orderLineListFull.get(position);
 
-                case R.id.foam_in_checkbox:
+                switch (view.getId()) {
 
-                    if (okCheckBox.isChecked()) {
+                    case R.id.foam_in_checkbox:
 
-                        line.setIsArrived(1);
-                        orderLineViewModel.update(line);
-                        orderLineListFull.remove(position);
-                        notifyDataSetChanged();
+                        if (okCheckBox.isChecked()) {
 
-                    } else {
-                        line.setIsArrived(0);
-                        orderLineViewModel.update(line);
-                    }
+                            line.setIsArrived(1);
+                            orderLineViewModel.update(line);
+                            orderLineListFull.remove(position);
+                            notifyDataSetChanged();
 
-                    break;
+                        } else {
+                            line.setIsArrived(0);
+                            orderLineViewModel.update(line);
+                        }
 
-                case R.id.foam_in_product_code:
+                        break;
 
-                    pushFragment(context, line);
+                    case R.id.foam_in_product_code:
 
-                    break;
+                        pushFragment(context, line);
+
+                        break;
+                }
             }
         }
     }

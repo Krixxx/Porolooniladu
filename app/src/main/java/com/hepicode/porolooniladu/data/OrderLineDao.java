@@ -19,8 +19,8 @@ public interface OrderLineDao {
     @Insert
     void insert(OrderLine orderLine);
 
-    @Query("DELETE FROM orderline_table")
-    void deleteAll();
+//    @Query("DELETE FROM orderline_table")
+//    void deleteAll();
 
     @Delete
     void deleteAOrderLine(OrderLine orderLine);
@@ -28,8 +28,8 @@ public interface OrderLineDao {
     @Query("DELETE FROM orderline_table WHERE ordernumber_col = :orderNumber")
     void deleteFullOrder(int orderNumber);
 
-    @Query("UPDATE orderline_table SET productcode_col = :productCode AND orderedqty_col = :orderedQuantity AND arrivedqty_col = :arrivedQuantity AND isarrived_col = :isArrived AND ordernumber_col = :orderNumber WHERE id = :id")
-    int updateOrderLineItem(int id, String productCode, int orderedQuantity, int arrivedQuantity, int isArrived, int orderNumber);
+//    @Query("UPDATE orderline_table SET productcode_col = :productCode AND orderedqty_col = :orderedQuantity AND arrivedqty_col = :arrivedQuantity AND isarrived_col = :isArrived AND ordernumber_col = :orderNumber WHERE id = :id")
+//    int updateOrderLineItem(int id, String productCode, int orderedQuantity, int arrivedQuantity, int isArrived, int orderNumber);
 
     @Update
     void updateOrderLine(OrderLine orderLine);

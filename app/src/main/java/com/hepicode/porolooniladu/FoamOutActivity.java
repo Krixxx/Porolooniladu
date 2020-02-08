@@ -18,16 +18,19 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hepicode.porolooniladu.adapter.FoamOutListAdapter;
 import com.hepicode.porolooniladu.model.FoamOutLine;
 import com.hepicode.porolooniladu.model.OrderLineViewModel;
 import com.hepicode.porolooniladu.util.CalendarModel;
+import com.hepicode.porolooniladu.util.FoamOutBottomSheetDialog;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FoamOutActivity extends AppCompatActivity {
+public class FoamOutActivity extends AppCompatActivity implements FoamOutBottomSheetDialog.BottomSheetListener {
+
 
     private List<String> spinnerItems = new ArrayList<>();
     private String selection;
@@ -39,6 +42,7 @@ public class FoamOutActivity extends AppCompatActivity {
     private ArrayAdapter<String> spinnerAdapter;
     private FoamOutListAdapter foamOutListAdapter;
     private OrderLineViewModel orderLineViewModel;
+    private FoamOutLine mFoamOutLine;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +53,7 @@ public class FoamOutActivity extends AppCompatActivity {
         spinnerItems = getIntent().getStringArrayListExtra("spinner_list");
 
         Log.d("FOAM_OUT_MAIN", "onCreate: " + spinnerItems.size());
+
         initViews();
 
         orderLineViewModel = ViewModelProviders.of(this).get(OrderLineViewModel.class);
@@ -132,17 +137,29 @@ public class FoamOutActivity extends AppCompatActivity {
                 String lines = getString(R.string.lines_title) + " " + foamOutListAdapter.getItemCount();
                 linesText.setText(lines);
 
-
-
             }
         });
 
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-    }
 
+    @Override
+    public void onButtonClicked(int id, int isGivenOut, int partialQuantity, String weekNumber, FoamOutLine line) {
+
+        mFoamOutLine = line;
+
+        if (mFoamOutLine == null) {
+
+            Log.d("MAIN_ORDERLINE_NULL", "onButtonClicked: ei lae andmeid");
+
+        } else {
+
+            mFoamOutLine.setPartialQuantity(partialQuantity);
+            mFoamOutLine.setIsGivenOut(isGivenOut);
+            orderLineViewModel.updateFoamOutLine(mFoamOutLine);
+            foamOutListAdapter.notifyDataSetChanged();
+            Log.d("MAIN", "onChanged: " + mFoamOutLine.getProductCode());
+        }
+        
+    }
 }

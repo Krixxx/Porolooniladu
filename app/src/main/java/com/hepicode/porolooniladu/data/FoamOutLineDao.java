@@ -17,14 +17,14 @@ public interface FoamOutLineDao {
     @Insert
     void insert(FoamOutLine foamOutLine);
 
-    @Query("DELETE FROM foam_out_table")
-    void deleteAll();
+//    @Query("DELETE FROM foam_out_table")
+//    void deleteAll();
 
     @Update
     void updateFoamOutLine(FoamOutLine foamOutLine);
 
-    @Delete
-    void deleteAFoamOutLine(FoamOutLine foamOutLine);
+//    @Delete
+//    void deleteAFoamOutLine(FoamOutLine foamOutLine);
 
     @Query("SELECT * FROM foam_out_table")
     LiveData<List<FoamOutLine>> getAllFoamOutLines();
@@ -35,6 +35,9 @@ public interface FoamOutLineDao {
     @Query("Select * FROM foam_out_table WHERE isgivenout_col = 1 AND weeknumber_col = :weekNumber ORDER BY date(dateout_col) ASC")
     LiveData<List<FoamOutLine>> getAllGivenOutFoamOutLines(String weekNumber);
 
-    @Query("SELECT * FROM foam_out_table WHERE isgivenout_col = 0 AND weeknumber_col = :weekNumber ORDER BY date(dateout_col) ASC")
+    @Query("SELECT * FROM foam_out_table WHERE (isgivenout_col = 0 OR isgivenout_col = 2) AND weeknumber_col = :weekNumber ORDER BY date(dateout_col) ASC")
     LiveData<List<FoamOutLine>> getAllUncheckedSingleFoamOutLines(String weekNumber);
+
+    @Query("SELECT * FROM foam_out_table WHERE isgivenout_col = 1 ORDER BY date(dateout_col) ASC, productcode_col ASC")
+    LiveData<List<FoamOutLine>> getAllCheckedFoamOutLines();
 }

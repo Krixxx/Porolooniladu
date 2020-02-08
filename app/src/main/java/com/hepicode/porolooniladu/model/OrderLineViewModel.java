@@ -23,6 +23,7 @@ public class OrderLineViewModel extends AndroidViewModel {
     private LiveData<List<OrderLine>> allUnCheckedOrderLines;
     private LiveData<List<OrderLine>> getAllLines;
     private LiveData<List<FoamOutLine>> getAllFoamOutLines;
+    private LiveData<List<FoamOutLine>> allCheckedFoamOutLines;
     private final MutableLiveData<Integer> orderLineFilter;
     private final MutableLiveData<String> weekOutFilter;
 
@@ -36,6 +37,7 @@ public class OrderLineViewModel extends AndroidViewModel {
         allOrderLines = orderLineRepository.getAllOrderLines();
         allFoamOutLines = orderLineRepository.getAllFoamLines();
         allCheckedOrderLines = orderLineRepository.getAllCheckedOrderLines();
+        allCheckedFoamOutLines = orderLineRepository.getAllCheckedFoamOutLines();
         allUnCheckedOrderLines = orderLineRepository.getAllUnCheckedOrderLines();
         orderLineFilter = new MutableLiveData<>();
         weekOutFilter = new MutableLiveData<>();
@@ -54,6 +56,10 @@ public class OrderLineViewModel extends AndroidViewModel {
 
     public LiveData<List<OrderLine>> getAllCheckedOrderLines(){
         return allCheckedOrderLines;
+    }
+
+    public LiveData<List<FoamOutLine>> getAllCheckedFoamOutLines(){
+        return allCheckedFoamOutLines;
     }
 
     public LiveData<List<OrderLine>> getAllUnCheckedOrderLines(){

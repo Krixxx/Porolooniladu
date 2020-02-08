@@ -15,7 +15,7 @@ import com.hepicode.porolooniladu.model.FoamOutWeekNumber;
 import com.hepicode.porolooniladu.model.OrderLine;
 import com.hepicode.porolooniladu.model.OrderNumber;
 
-@Database(entities = {OrderLine.class, OrderNumber.class, FoamOutLine.class, FoamOutWeekNumber.class}, version = 3, exportSchema = false)
+@Database(entities = {OrderLine.class, OrderNumber.class, FoamOutLine.class, FoamOutWeekNumber.class}, version = 4, exportSchema = false)
 public abstract class OrderListDatabase extends RoomDatabase {
 
     public static volatile OrderListDatabase INSTANCE;

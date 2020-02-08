@@ -1,6 +1,7 @@
 package com.hepicode.porolooniladu.adapter;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,14 +12,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.hepicode.porolooniladu.FoamInActivity;
 import com.hepicode.porolooniladu.FoamOutActivity;
 import com.hepicode.porolooniladu.R;
 import com.hepicode.porolooniladu.model.FoamOutLine;
+import com.hepicode.porolooniladu.model.OrderLine;
 import com.hepicode.porolooniladu.model.OrderLineViewModel;
 import com.hepicode.porolooniladu.util.CalendarModel;
+import com.hepicode.porolooniladu.util.FoamInBottomSheetDialog;
+import com.hepicode.porolooniladu.util.FoamOutBottomSheetDialog;
 
 import org.w3c.dom.Text;
 
@@ -72,8 +78,8 @@ public class FoamOutListAdapter extends RecyclerView.Adapter<FoamOutListAdapter.
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            Log.d("ADAPTER", "onBindViewHolder parsed: " + parsedDate);
-            Log.d("ADAPTER", "onBindViewHolder line: " + lineDate);
+//            Log.d("ADAPTER", "onBindViewHolder parsed: " + parsedDate);
+//            Log.d("ADAPTER", "onBindViewHolder line: " + lineDate);
 
 
             holder.dateTextView.setText(current.getDateOut());
@@ -83,10 +89,12 @@ public class FoamOutListAdapter extends RecyclerView.Adapter<FoamOutListAdapter.
             holder.checkBox.setOnCheckedChangeListener(null);
             holder.checkBox.setChecked(false);
 
-            if (lineDate != null && lineDate.before(parsedDate)) {
-                holder.singleLineLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.partiallyArrivedPosition));
+            if (lineDate != null && current.getIsGivenOut() == 2) {
+                holder.singleLineLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.previousDatePosition));
             } else if (lineDate.equals(parsedDate)){
                 holder.singleLineLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.onDatePosition));
+            } else if (lineDate.before(parsedDate)) {
+                holder.singleLineLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.partiallyArrivedPosition));
             } else {
                 holder.singleLineLayout.setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent));
             }
@@ -126,6 +134,7 @@ public class FoamOutListAdapter extends RecyclerView.Adapter<FoamOutListAdapter.
             singleLineLayout = itemView.findViewById(R.id.foam_out_single_line_layout);
 
             checkBox.setOnClickListener(this);
+            productCodeTextView.setOnClickListener(this);
         }
 
         @Override
@@ -133,23 +142,50 @@ public class FoamOutListAdapter extends RecyclerView.Adapter<FoamOutListAdapter.
 
             int position = getAdapterPosition();
 
-            FoamOutLine foamOutLine = foamOutLineList.get(position);
+            if (position != RecyclerView.NO_POSITION) {
 
-            switch (view.getId()){
+                FoamOutLine foamOutLine = foamOutLineList.get(position);
 
-                case R.id.foam_out_checkbox:
+                switch (view.getId()) {
 
-                    if (checkBox.isChecked()){
-                        foamOutLine.setIsGivenOut(1);
-                        orderLineViewModel.updateFoamOutLine(foamOutLine);
-                        foamOutLineList.remove(position);
-                        notifyDataSetChanged();
-                    } else {
-                        foamOutLine.setIsGivenOut(0);
-                        orderLineViewModel.updateFoamOutLine(foamOutLine);
-                    }
-                    break;
+                    case R.id.foam_out_checkbox:
+
+                        if (checkBox.isChecked()) {
+                            foamOutLine.setIsGivenOut(1);
+                            orderLineViewModel.updateFoamOutLine(foamOutLine);
+                            foamOutLineList.remove(position);
+                            notifyDataSetChanged();
+                        } else {
+                            foamOutLine.setIsGivenOut(0);
+                            orderLineViewModel.updateFoamOutLine(foamOutLine);
+                        }
+                        break;
+
+                    case R.id.foam_out_product_code:
+
+                        pushFragment(context, foamOutLine);
+
+                        break;
+                }
             }
         }
+    }
+
+    public void pushFragment(Context context, FoamOutLine line) {
+        FragmentManager fm = ((FoamOutActivity) context).getSupportFragmentManager();
+        FoamOutBottomSheetDialog bottomSheet = new FoamOutBottomSheetDialog();
+
+        Bundle info = new Bundle();
+
+        info.putInt("id", line.getId());
+        info.putString("product_code", line.getProductCode());
+        info.putInt("quantity", line.getOutQuantity());
+        info.putString("week_number", line.getWeekNumber());
+        info.putString("date", line.getDateOut());
+        info.putInt("partial_quantity", line.getPartialQuantity());
+        info.putInt("is_given_out", line.getIsGivenOut());
+        bottomSheet.setArguments(info);
+
+        bottomSheet.show(fm, "");
     }
 }

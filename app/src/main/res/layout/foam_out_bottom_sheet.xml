@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/foam_out_bottom_sheet"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="16dp"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/FoamInHeaderAttr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tootekood:" />
+
+            <TextView
+                android:id="@+id/bs_foam_out_product_code"
+                style="@style/FoamInHeaderAttr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="P-POROLOON-22" />
+
+        </LinearLayout>
+
+
+
+
+
+        <LinearLayout
+            android:id="@+id/bs_foam_out_arrived_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="78dp"
+            android:layout_toStartOf="@id/bs_foam_out_ordered_layout"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/bs_foam_out_given_quantity_tw"
+                style="@style/FoamInHeaderAttr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/foam_out_given" />
+
+            <EditText
+                android:id="@+id/bs_foam_out_actual_given_qty_et"
+                style="@style/FoamInHeaderAttr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/bs_foam_out_given_quantity_tw"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@color/white"
+                android:inputType="number" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/bs_foam_out_ordered_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="78dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="115dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/bs_foam_out_planned_quantity_tw"
+                style="@style/FoamInHeaderAttr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Plaan" />
+
+            <TextView
+                android:id="@+id/bs_foam_out_ordered_qty"
+                style="@style/FoamInHeaderAttr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="12dp"
+                android:text="10" />
+
+        </LinearLayout>
+
+
+        <Button
+            android:id="@+id/bs_foam_out_save_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:padding="16dp"
+            android:text="Salvesta" />
+
+
+    </RelativeLayout>
+
+</LinearLayout>

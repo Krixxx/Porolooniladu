@@ -26,6 +26,7 @@ public class OrderLineRepository {
     private LiveData<List<OrderLine>> allOrderLines;
     private LiveData<List<FoamOutLine>> allFoamOutLines;
     private LiveData<List<OrderLine>> allCheckedOrderLines;
+    private LiveData<List<FoamOutLine>> allCheckedFoamOutLines;
     private LiveData<List<OrderLine>> allUnCheckedOrderLines;
 
     private OrderNumberDao orderNumberDao;
@@ -46,6 +47,7 @@ public class OrderLineRepository {
         allOrderLines = orderLineDao.getAllOrderLines();
         allFoamOutLines = foamOutLineDao.getAllFoamOutLines();
         allCheckedOrderLines = orderLineDao.getAllCheckedOrderLines();
+        allCheckedFoamOutLines = foamOutLineDao.getAllCheckedFoamOutLines();
         allUnCheckedOrderLines = orderLineDao.getAllUnCheckedOrderLines();
 
         allOrderNumbers = orderNumberDao.getAllOrderNumbers();
@@ -66,6 +68,11 @@ public class OrderLineRepository {
     public LiveData<List<OrderLine>> getAllCheckedOrderLines() {
 
         return allCheckedOrderLines;
+    }
+
+    public LiveData<List<FoamOutLine>> getAllCheckedFoamOutLines(){
+
+        return allCheckedFoamOutLines;
     }
 
     public LiveData<OrderLine> getAOrderLine(int id){

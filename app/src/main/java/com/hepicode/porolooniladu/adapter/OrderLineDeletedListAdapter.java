@@ -97,31 +97,33 @@ public class OrderLineDeletedListAdapter extends RecyclerView.Adapter<OrderLineD
         @Override
         public void onClick(View view) {
 
-            int position;
-            position = getAdapterPosition();
+            int position = getAdapterPosition();
 
-            OrderLine line = orderLineList.get(position);
+            if (position != RecyclerView.NO_POSITION) {
 
-            switch (view.getId()) {
+                OrderLine line = orderLineList.get(position);
 
-                case R.id.foam_in_checkbox_del:
+                switch (view.getId()) {
 
-                    if (okCheckBox.isChecked()) {
+                    case R.id.foam_in_checkbox_del:
 
-                        line.setIsArrived(1);
-                        orderLineViewModel.update(line);
+                        if (okCheckBox.isChecked()) {
 
-                    } else {
-                        line.setIsArrived(0);
-                        orderLineViewModel.update(line);
-                        orderLineList.remove(getAdapterPosition());
-                    }
+                            line.setIsArrived(1);
+                            orderLineViewModel.update(line);
 
-                    break;
+                        } else {
+                            line.setIsArrived(0);
+                            orderLineViewModel.update(line);
+                            orderLineList.remove(getAdapterPosition());
+                        }
 
-                case R.id.foam_in_product_code_del:
-                    Toast.makeText(context, "Status: " + line.getIsArrived(), Toast.LENGTH_SHORT).show();
-                    break;
+                        break;
+
+                    case R.id.foam_in_product_code_del:
+                        Toast.makeText(context, "Status: " + line.getIsArrived(), Toast.LENGTH_SHORT).show();
+                        break;
+                }
             }
 
         }

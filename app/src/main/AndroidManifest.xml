@@ -6,12 +6,14 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ng_launcher_white"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ng_launcher_white_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FoamOutToBeDeletedActivity"></activity>
+        <activity android:name=".FoamOutEditActivity"
+            android:theme="@style/AppThemeNoActionBar" />/>
+        <activity android:name=".FoamOutToBeDeletedActivity" />
         <activity
             android:name=".FoamOutActivity"
             android:theme="@style/AppThemeNoActionBar" />

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Poroloonilao Liikumised</string>
+    <string name="app_name">Materjalide Ladu</string>
     <string name="btn_foam_in">Porolooni vastuvõtt</string>
     <string name="btn_foam_out">Porolooni väljastus</string>
     <string name="btn_fabrics_out">Kangaste väljastus</string>
@@ -37,4 +37,9 @@
     <string name="foam_out_planned">Plaan</string>
     <string name="foam_out_week_nr">Nädala number</string>
     <string name="foam_out_to_be_deleted_title">Kustutamist ootavad nädalaplaanid</string>
+    <string name="foam_out_given">Väljast. / </string>
+    <string name="no_plan_to_delete">Pole ühtegi porolooniplaani, mida kustutada!</string>
+    <string name="no_plan_to_edit">Pole ühtegi porolooniplaani, mida muuta!</string>
+    <string name="foam_out_given_title">Väljastatud poroloon</string>
+    <string name="foam_out_date_title">Kuupäev</string>
 </resources>

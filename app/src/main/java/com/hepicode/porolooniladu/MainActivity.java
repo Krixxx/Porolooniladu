@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int PERMISSION_REQUEST_STORAGE = 1000;
     Button foamInButton, foamOutButton, fabricOutButton;
     ImageButton foamInDownload, foamInDeleted, foamInEdit, foamOutDownload, foamOutEdit, foamOutDeleted;
-    private int quantity, foamOutQuantity, arrivedQuantity = 0, isArrived = 0, isGivenOut = 0, workerNumber = 0;
+    private int quantity, foamOutQuantity, arrivedQuantity = 0, partialQuantity = 0, isArrived = 0, isGivenOut = 0;
     private String foamInProductCode, filename, foamOutProductCode, foamOutFilename, foamOutDate, foamOutWeekNumber;
     private OrderLineViewModel orderLineViewModel;
     private OrderLine orderLine;
@@ -212,7 +212,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.btn_foamout_edit:
-                break;
+                if (foamOutSpinnerItems.size() != 0) {
+
+                    Intent intent4 = new Intent(MainActivity.this, FoamOutEditActivity.class);
+                    startActivity(intent4);
+                    break;
+
+                } else {
+                    Toast.makeText(this, R.string.no_plan_to_edit, Toast.LENGTH_SHORT).show();
+                    break;
+                }
 
             case R.id.btn_foamout_deleted:
 
@@ -223,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
 
                 } else {
-                    Toast.makeText(this, R.string.nothing_to_delete, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.no_plan_to_delete, Toast.LENGTH_SHORT).show();
                     break;
                 }
             default:
@@ -336,7 +345,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 foamOutDate = row[2];
                 i++;
 
-                foamOutLine = new FoamOutLine(foamOutProductCode, foamOutQuantity, foamOutDate, isGivenOut, workerNumber, foamOutFilename);
+                foamOutLine = new FoamOutLine(foamOutProductCode, foamOutQuantity, partialQuantity, foamOutDate, isGivenOut, foamOutFilename);
                 orderLineViewModel.insertFoamOutLine(foamOutLine);
             }
             br.close();
