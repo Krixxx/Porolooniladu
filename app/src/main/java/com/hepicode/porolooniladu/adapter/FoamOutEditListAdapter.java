@@ -45,7 +45,7 @@ public class FoamOutEditListAdapter extends RecyclerView.Adapter<FoamOutEditList
     @Override
     public void onBindViewHolder(@NonNull FoamOutEditViewHolder holder, int position) {
 
-        if (foamOutLineList != null){
+        if (foamOutLineList != null) {
 
             FoamOutLine current = foamOutLineList.get(position);
 
@@ -55,10 +55,9 @@ public class FoamOutEditListAdapter extends RecyclerView.Adapter<FoamOutEditList
             holder.checkBox.setChecked(true);
 
         }
-
     }
 
-    public void setFoamOutEditLines(List<FoamOutLine> foamOutLines){
+    public void setFoamOutEditLines(List<FoamOutLine> foamOutLines) {
         foamOutLineList = foamOutLines;
 
         notifyDataSetChanged();
@@ -67,7 +66,7 @@ public class FoamOutEditListAdapter extends RecyclerView.Adapter<FoamOutEditList
     @Override
     public int getItemCount() {
 
-        if (foamOutLineList != null){
+        if (foamOutLineList != null) {
             return foamOutLineList.size();
         } else {
             return 0;
@@ -96,7 +95,7 @@ public class FoamOutEditListAdapter extends RecyclerView.Adapter<FoamOutEditList
 
             int position = getAdapterPosition();
 
-            if (position != RecyclerView.NO_POSITION){
+            if (position != RecyclerView.NO_POSITION) {
 
                 FoamOutLine line = foamOutLineList.get(position);
 
@@ -122,9 +121,7 @@ public class FoamOutEditListAdapter extends RecyclerView.Adapter<FoamOutEditList
                         break;
 
                 }
-
             }
-
         }
     }
 }

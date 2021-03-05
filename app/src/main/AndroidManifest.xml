@@ -4,6 +4,10 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ng_launcher_white"
@@ -11,8 +15,11 @@
         android:roundIcon="@mipmap/ng_launcher_white_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FoamOutEditActivity"
-            android:theme="@style/AppThemeNoActionBar" />/>
+        <activity android:name=".FabricsOutActivity"
+            android:theme="@style/AppThemeNoActionBar" />
+        <activity
+            android:name=".FoamOutEditActivity"
+            android:theme="@style/AppThemeNoActionBar" />
         <activity android:name=".FoamOutToBeDeletedActivity" />
         <activity
             android:name=".FoamOutActivity"

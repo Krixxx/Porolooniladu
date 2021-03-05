@@ -42,4 +42,7 @@
     <string name="no_plan_to_edit">Pole ühtegi porolooniplaani, mida muuta!</string>
     <string name="foam_out_given_title">Väljastatud poroloon</string>
     <string name="foam_out_date_title">Kuupäev</string>
+    <string name="week_text">Nädal</string>
+    <string name="fab_out_bs_planned_title">Plaan</string>
+    <string name="fab_out_bs_remaining_title">Jääk</string>
 </resources>

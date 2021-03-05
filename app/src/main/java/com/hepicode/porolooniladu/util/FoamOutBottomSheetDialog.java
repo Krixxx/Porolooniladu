@@ -71,17 +71,30 @@ public class FoamOutBottomSheetDialog extends BottomSheetDialogFragment {
             @Override
             public void onClick(View view) {
 
-                if (!givenQuantityEt.getText().toString().isEmpty() && Integer.parseInt(String.valueOf(givenQuantityEt.getText())) < outQuantity) {
+                if (!givenQuantityEt.getText().toString().isEmpty()){
                     partialQuantity = Integer.parseInt(String.valueOf(givenQuantityEt.getText()));
-                    isGivenOut = 2;
-                } else if (Integer.parseInt(String.valueOf(givenQuantityEt.getText())) == outQuantity){
-                    isGivenOut = 1;
-                } else if (Integer.parseInt(String.valueOf(givenQuantityEt.getText())) > outQuantity){
-                    Toast.makeText(getContext(), "Kogus ei saa olla suurem kui plaanitud!", Toast.LENGTH_SHORT).show();
-                    partialQuantity = 0;
                 } else {
                     partialQuantity = 0;
                 }
+
+                foamOutLine.setPartialQuantity(partialQuantity);
+
+
+//                if (!givenQuantityEt.getText().toString().isEmpty() && Integer.parseInt(String.valueOf(givenQuantityEt.getText())) < outQuantity) {
+//                    partialQuantity = Integer.parseInt(String.valueOf(givenQuantityEt.getText()));
+//                    foamOutLine.setIsGivenOut(2);
+//                    isGivenOut = 2;
+//                } else if (Integer.parseInt(String.valueOf(givenQuantityEt.getText())) == outQuantity){
+//                    foamOutLine.setIsGivenOut(1);
+//                    isGivenOut = 1;
+//                } else if (Integer.parseInt(String.valueOf(givenQuantityEt.getText())) > outQuantity){
+//                    Toast.makeText(getContext(), "Kogus ei saa olla suurem kui plaanitud!", Toast.LENGTH_SHORT).show();
+//                    foamOutLine.setPartialQuantity(0);
+//                    partialQuantity = 0;
+//                } else {
+//                    foamOutLine.setPartialQuantity(0);
+//                    partialQuantity = 0;
+//                }
 
                 mListener.onButtonClicked(id, isGivenOut, partialQuantity, weekNumber, foamOutLine);
                 Log.d("BOTTOM_SHEET", "onClick: " + id + " " + weekNumber);

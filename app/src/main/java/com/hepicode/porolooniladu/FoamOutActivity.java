@@ -148,18 +148,34 @@ public class FoamOutActivity extends AppCompatActivity implements FoamOutBottomS
 
         mFoamOutLine = line;
 
-        if (mFoamOutLine == null) {
-
-            Log.d("MAIN_ORDERLINE_NULL", "onButtonClicked: ei lae andmeid");
-
-        } else {
-
-            mFoamOutLine.setPartialQuantity(partialQuantity);
-            mFoamOutLine.setIsGivenOut(isGivenOut);
-            orderLineViewModel.updateFoamOutLine(mFoamOutLine);
-            foamOutListAdapter.notifyDataSetChanged();
-            Log.d("MAIN", "onChanged: " + mFoamOutLine.getProductCode());
+        if (mFoamOutLine != null) {
+            if (mFoamOutLine.getPartialQuantity() < mFoamOutLine.getOutQuantity() && mFoamOutLine.getPartialQuantity() > 0){
+                mFoamOutLine.setIsGivenOut(2);
+            } else if (mFoamOutLine.getPartialQuantity() == mFoamOutLine.getOutQuantity()){
+                mFoamOutLine.setIsGivenOut(1);
+            } else if (mFoamOutLine.getPartialQuantity() > mFoamOutLine.getOutQuantity()){
+                Toast.makeText(this, "Kogus ei saa olla suurem kui plaanitud!", Toast.LENGTH_SHORT).show();
+                mFoamOutLine.setPartialQuantity(0);
+            } else if (mFoamOutLine.getPartialQuantity() == 0){
+                Toast.makeText(this, "Kogus on 0", Toast.LENGTH_SHORT).show();
+            }
         }
+
+        orderLineViewModel.updateFoamOutLine(mFoamOutLine);
+        foamOutListAdapter.notifyDataSetChanged();
+
+//        if (mFoamOutLine == null) {
+//
+//            Log.d("MAIN_ORDERLINE_NULL", "onButtonClicked: ei lae andmeid");
+//
+//        } else {
+//
+//            mFoamOutLine.setPartialQuantity(partialQuantity);
+//            mFoamOutLine.setIsGivenOut(isGivenOut);
+//            orderLineViewModel.updateFoamOutLine(mFoamOutLine);
+//            foamOutListAdapter.notifyDataSetChanged();
+//            Log.d("MAIN", "onChanged: " + mFoamOutLine.getProductCode());
+//        }
         
     }
 }

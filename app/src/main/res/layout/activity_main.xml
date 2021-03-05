@@ -12,7 +12,7 @@
         android:layout_height="50dp"
         android:layout_marginStart="44dp"
         android:layout_marginTop="13dp"
-        android:background="@android:color/transparent"
+        android:background="@drawable/support_button"
         app:layout_constraintStart_toEndOf="@+id/btn_foam_out"
         app:layout_constraintTop_toTopOf="@+id/btn_foam_out"
         app:srcCompat="@drawable/ic_file_download_black" />
@@ -20,6 +20,7 @@
     <Button
         android:id="@+id/btn_foam_in"
         style="@style/MainButton"
+        android:background="@drawable/foam_in_button"
         android:layout_width="325dp"
         android:layout_height="200dp"
         android:layout_marginTop="200dp"
@@ -36,6 +37,7 @@
         android:layout_width="325dp"
         android:layout_height="200dp"
         android:text="@string/btn_foam_out"
+        android:background="@drawable/foam_in_button"
         app:layout_constraintBottom_toTopOf="@+id/btn_fbrcs_out"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -48,6 +50,7 @@
         android:layout_height="200dp"
         android:layout_marginBottom="200dp"
         android:text="@string/btn_fabrics_out"
+        android:background="@drawable/foam_in_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -60,7 +63,7 @@
         android:layout_height="50dp"
         android:layout_marginStart="44dp"
         android:layout_marginTop="13dp"
-        android:background="@android:color/transparent"
+        android:background="@drawable/support_button"
         app:layout_constraintStart_toEndOf="@+id/btn_foam_in"
         app:layout_constraintTop_toTopOf="@+id/btn_foam_in"
         app:srcCompat="@drawable/ic_file_download_black" />
@@ -71,7 +74,7 @@
         android:layout_height="50dp"
         android:layout_marginStart="44dp"
         android:layout_marginTop="75dp"
-        android:background="@android:color/transparent"
+        android:background="@drawable/support_button"
         app:layout_constraintStart_toEndOf="@+id/btn_foam_in"
         app:layout_constraintTop_toTopOf="@+id/btn_foam_in"
         app:srcCompat="@drawable/ic_edit_black" />
@@ -82,7 +85,7 @@
         android:layout_height="50dp"
         android:layout_marginStart="44dp"
         android:layout_marginTop="75dp"
-        android:background="@android:color/transparent"
+        android:background="@drawable/support_button"
         app:layout_constraintStart_toEndOf="@+id/btn_foam_out"
         app:layout_constraintTop_toTopOf="@+id/btn_foam_out"
         app:srcCompat="@drawable/ic_edit_black" />
@@ -93,7 +96,7 @@
         android:layout_height="50dp"
         android:layout_marginStart="44dp"
         android:layout_marginTop="137dp"
-        android:background="@android:color/transparent"
+        android:background="@drawable/support_button"
         app:layout_constraintStart_toEndOf="@+id/btn_foam_in"
         app:layout_constraintTop_toTopOf="@+id/btn_foam_in"
         app:srcCompat="@drawable/ic_delete_black" />
@@ -104,7 +107,7 @@
         android:layout_height="50dp"
         android:layout_marginStart="44dp"
         android:layout_marginTop="137dp"
-        android:background="@android:color/transparent"
+        android:background="@drawable/support_button"
         app:layout_constraintStart_toEndOf="@+id/btn_foam_out"
         app:layout_constraintTop_toTopOf="@+id/btn_foam_out"
         app:srcCompat="@drawable/ic_delete_black" />

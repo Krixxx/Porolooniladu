@@ -161,7 +161,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.btn_fbrcs_out:
 
-                Toast.makeText(this, R.string.toast_nothing_to_show, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, FabricsOutActivity.class);
+                startActivity(intent);
+
                 break;
 
             case R.id.btn_foamin_download:
